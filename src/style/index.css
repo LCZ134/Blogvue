@@ -1,0 +1,11 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.herader,
+.footer {
+    text-align: center;
+    height: 80px;
+    background: cornsilk;
+}
