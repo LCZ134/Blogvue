@@ -8,6 +8,7 @@ export default {
     opened: settings.page.opened,
     current: '',
     pool: []
+
   },
   actions: {
     /**
@@ -41,6 +42,8 @@ export default {
             return same
           })
 
+          console.log(fullPath, pageOpend);
+
           if (pageOpend) {
             // 页面以前打开过
             dispatch('openedUpdate', {
@@ -69,7 +72,6 @@ export default {
         }
       })
     },
-
     add({ state }, { tag, params, query, fullPath }) {
       return new Promise(async resolve => {
         // 设置新的 tag 在新打开一个以前没打开过的页面时使用
@@ -131,7 +133,6 @@ export default {
      */
     init(state, routes) {
       const pool = []
-      console.log('init', state.pool);
       const push = function(routes) {
         routes.forEach(route => {
           if (route.children && route.children.length > 0) {

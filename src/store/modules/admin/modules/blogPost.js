@@ -7,7 +7,7 @@ export default {
   state: {
     bloglist: [],
     totalCount: 0,
-    blogPost: {},
+    blogPost: [],
     selectComment: {
       status: false,
       blogContent: ""
@@ -15,13 +15,19 @@ export default {
   },
   mutations: {
     getBlogPosts(state, data) {
-      state.bloglist = data;
+      state.bloglist = data.map(s => {
+        var resilt = {};
+        Object.keys(s).forEach(w => {
+          resilt[w] = (w == "describe") ? (s[w].length > 50 ? `${s[w].substring(0,50)}...` : s[w]) : s[w];
+        });
+        return resilt;
+      });
     },
     getTotalCount(state, Count) {
       state.totalCount = Count;
     },
     getBlogPost(state, data) {
-      state.blogPost = data;
+      state.blogPost[data.id] = data;
     },
     updateBlogPosts(state, data) {
       state.bloglist = state.blogpost.map(i => i.id === data.id ? data : i);

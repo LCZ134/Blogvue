@@ -25,8 +25,7 @@ export default {
     }
   },
   actions: {
-
-    //获取所有评论,这里有分层
+    //获取所有评论
     getBlogCommentData({ commit }, data) {
       return new Promise((resolve, reject) => {
 
@@ -44,7 +43,7 @@ export default {
     },
 
     //删除评论
-    deleteBlogPost({ commit }, blogCommentId) {
+    deleteBlogComment({ commit }, blogCommentId) {
       MessageBox.confirm("此操作将删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -65,8 +64,14 @@ export default {
       })
     },
     //显示评论
-    HideBlogComment({ commit }, blogCommentId) {
-      MessageBox.confirm("", "", {
+    HideBlogComment({ commit, state }, blogCommentId) {
+
+      if (state.blogCommentList.find(s => s.id == blogCommentId).isHidden != 0) {
+        Message({ message: "已经为显示", type: 'error' });
+        return false;
+      }
+
+      MessageBox.confirm("此操作将显示评论, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: 'warning'
@@ -78,17 +83,24 @@ export default {
             commit('toggleBlogComment', { id: blogCommentId, IsHidden: true });
             Message({ message: "操作成功", type: "success" });
           }
+
         })
       })
     },
     //隐藏评论
-    ShowBlogComment({ commit }, blogCommentId) {
-      MessageBox.confirm("", "", {
+    ShowBlogComment({ commit, state }, blogCommentId) {
+
+      if (state.blogCommentList.find(s => s.id == blogCommentId).isHidden != 1) {
+        Message({ message: "已经为隐藏", type: 'error' });
+        return false;
+      };
+
+      MessageBox.confirm("此操作将显示评论, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: 'warning'
       }).then(() => {
-        api.post("/Comment/ShowBlogComment", { id: blogCommentId }, res => {
+        api.post("/Comment/HideBlogComment", { id: blogCommentId }, res => {
           if (res.statusCode != 0) {
             Message({ message: res.result, type: 'error' });
           } else {

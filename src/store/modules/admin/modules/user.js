@@ -23,13 +23,15 @@ export default {
     },
   },
   actions: {
-    getBlogTagData({ commit }) {
+    getBlogTagData({ commit }, data) {
       return new Promise((resolve, reject) => {
-        api.get("/tag", null, res => {
-          commit('getBlogTag', res.data);
-          resolve();
+        api.get("", null, res => {
+
         })
       })
     },
+
+
+
   }
 }

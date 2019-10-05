@@ -43,7 +43,7 @@
               :on-change="imageChange"
               list-type="picture-card"
               name="files"
-              :limit="2"
+              :limit="1"
               :file-list="fileList"
               multiple
               :auto-upload="false"
@@ -90,6 +90,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
+      blogPostId: "",
       form: {
         title: "",
         tags: [],
@@ -164,12 +165,38 @@ export default {
       "insertBlogPost",
       "updateBlogPost"
     ]),
+    loadPageData() {
+      this.blogPostId = this.$route.params.id;
+      if (this.$route.params.id != null && this.blogPostId != ":id") {
+        this.getBlogPost(this.blogPostId).then(() => {
+          Object.keys(this.form).forEach(key => {
+            var obj = this.blogPost[this.blogPostId][key];
 
+            if (obj == null || obj.length <= 0) return false;
+
+            if (key == "tags") {
+              this.form[key] = obj.map(i => i.id);
+            } else if (key == "bannerUrl") {
+              //这里还需要判断是否是网页链接
+              var re = /(http|https):\/\/([\w.]+\/?)\S*/;
+              obj = re.test(obj) ? obj : `.${obj}`;
+              this.fileList = [{ name: "filePath.jpg", url: obj }];
+              this.oldImageUrl = obj;
+            } else {
+              this.form[key] = obj;
+            }
+          });
+        });
+      }
+
+      this.getBlogTagData().then(() => {
+        this.blogTags = this.blogTagList;
+      });
+    },
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
           if (this.isfile) this.submitFile();
-
           if (this.form.id != null && this.form.id.length > 0) {
             this.updateBlogPost(this.form);
           } else {
@@ -205,30 +232,28 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    handleRemovePicture(file, fileList) {
-      console.log(file, fileList);
-    },
+    handleRemovePicture(file, fileList) {},
     imageChange(file, fileList, name) {
-      console.log("要上传的数据", fileList, this.fileList);
       this.fileList = fileList;
+      this.dialogImageUrl = file.url;
     },
     submitFile() {
       if (this.fileList.length <= 0) {
         this.$message.error("未上传图片");
         return false;
       }
-      if (
-        this.form.id != null &&
-        this.form.id.length > 0 &&
-        this.oldImageUrl == this.dialogImageUrl
-      )
-        return false;
+
+      // if (
+      //   this.form.id != null &&
+      //   this.form.id.length > 0 &&
+      //   this.oldImageUrl == this.dialogImageUrl
+      // )return false;
 
       const formData = new FormData();
       formData.append("file", this.fileList[0].raw);
       this.$api.post("/file", formData, res => {
         if (res[0].statusCode == 0) {
-          this.filePath = res[0].extends.path;
+          this.form.bannerUrl = `.${res[0].extends.path}`;
         } else {
           this.$message.error(res.result);
         }
@@ -242,32 +267,18 @@ export default {
     ...mapState("admin/blogTag", ["blogTagList"]),
     ...mapState("admin/blogPost", ["blogPost"])
   },
-  created() {
-    var blogPostId = this.$route.params.id;
-
-    if (this.$route.params.id != null && blogPostId != ":id") {
-      this.getBlogPost(blogPostId).then(() => {
-        console.log("页面加载时", this.blogPost);
-        console.log("图片路径", this.blogPost.bannerUrl);
-        this.fileList = [
-          { name: "filePath.jpg", url: this.blogPost.bannerUrl }
-        ];
-        this.oldImageUrl = this.dialogImageUrl = this.blogPost.bannerUrl;
-
-        Object.keys(this.form).forEach(key => {
-          if (key == "tags") {
-            this.form[key] = this.blogPost[key].map(i => i.id);
-          } else {
-            this.form[key] = this.blogPost[key];
-          }
-        });
-      });
+  beforeRouteUpdate(to, from, next) {
+    console.log("route updated", to);
+    this.loadPageData();
+  },
+  mounted() {
+    this.loadPageData();
+  },
+ watch: {
+    $router(to, from) {
+      console.log('路由发生了变化',this.$route.query);
     }
-
-    this.getBlogTagData().then(() => {
-      this.blogTags = this.blogTagList;
-    });
-  }
+  },
 };
 </script>
 

@@ -6,7 +6,6 @@
           <el-form-item label="标题">
             <el-input v-model="form.keyword" placeholder="请输入内容"></el-input>
           </el-form-item>
-
           <el-form-item label="标签">
             <el-select v-model="form.tags" placeholder="选择标签" @change="selectTag()">
               <el-option
@@ -30,9 +29,9 @@
 
         <el-table style="width: 100%;" :data="bloglist">
           <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
-          <el-table-column label="用户姓名" prop="user.nickName" width="180"></el-table-column>
+          <el-table-column label="用户姓名" prop="user.nickName" width="120"></el-table-column>
           <el-table-column label="标题" prop="title" width="180"></el-table-column>
-          <el-table-column label="描述" prop="describe"></el-table-column>
+          <el-table-column label="描述" prop="describe" width="400"></el-table-column>
           <el-table-column label="点赞数" prop="like"></el-table-column>
           <el-table-column label="公开">
             <template slot-scope="scope">
