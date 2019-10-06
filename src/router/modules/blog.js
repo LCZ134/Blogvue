@@ -66,6 +66,17 @@ export default {
         showTab: true
       },
       IsHidden: true,
-    }
+    },
+    // {
+    //   path: '/blogComment',
+    //   name: '弹幕列表',
+    //   component: blogComment,
+    //   meta: {
+    //     title: '弹幕列表',
+    //     auth: true,
+    //     showTab: true
+    //   },
+    //   IsHidden: true,
+    // }
   ]
 }

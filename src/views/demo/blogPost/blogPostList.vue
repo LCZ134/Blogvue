@@ -27,7 +27,8 @@
           </el-form-item>
         </el-form>
 
-        <el-table style="width: 100%;" :data="bloglist">
+        <div class="comment-table">
+         <el-table style="width: 100%;" :data="bloglist">
           <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
           <el-table-column label="用户姓名" prop="user.nickName" width="120"></el-table-column>
           <el-table-column label="标题" prop="title" width="180"></el-table-column>
@@ -53,6 +54,9 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
+
+
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -142,11 +146,13 @@ export default {
 .text {
   font-size: 14px;
 }
-
 .item {
   margin-bottom: 18px;
 }
-
+.comment-table {
+  min-height: 500px;
+  overflow: hidden;
+}
 .clearfix:before,
 .clearfix:after {
   display: table;

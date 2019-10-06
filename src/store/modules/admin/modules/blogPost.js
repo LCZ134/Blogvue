@@ -112,9 +112,11 @@ export default {
     fetchBlogPost({ commit }, { data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
+
       Object.keys(data).forEach(key => {
         formData.append(key, data[key]);
       });
+
       api[methods](
         "/blog",
         formData,

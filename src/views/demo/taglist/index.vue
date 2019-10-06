@@ -1,25 +1,24 @@
 <template>
   <div class="blogTag">
+    <el-form :inline="true" class="demo-form-inline">
+      <el-form-item label="名称">
+        <el-input placeholder="请输入内容"></el-input>
+      </el-form-item>
 
-			<el-form :inline="true" class="demo-form-inline">
-				<el-form-item label="名称">
-					<el-input  placeholder="请输入内容"></el-input>
-				</el-form-item>
-
-				<el-form-item>
-					<el-button type="primary" >查询</el-button>
-				</el-form-item>
-			</el-form>
+      <el-form-item>
+        <el-button type="primary">查询</el-button>
+      </el-form-item>
+    </el-form>
 
     <div class="blogTag-table">
       <el-table style="width: 100%;" :data="blogTagList">
-        <el-table-column label="标签编号" prop="blogPostId" width="180"></el-table-column>
-			  <el-table-column label="标签名称" prop="blogPostId" width="180"></el-table-column>
-        <el-table-column label="文章" prop="blogPostId" width="180"></el-table-column>
+        <el-table-column label="标签名称" prop="title"></el-table-column>
+        <el-table-column label="文章数" prop="citationCount"></el-table-column>
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="update(scope.row)" size="mini">编辑</el-button>
-            <el-button  @click="delteBlogTag(scope.row.id)" size="mini" type="danger">删除</el-button>
+            <!-- <el-button @click="getBlogTag(scope.row)" size="mini">查看</el-button> -->
+            <el-button @click="setdialy(scope.row, true)" size="mini">编辑</el-button>
+            <el-button @click="delteBlogTags(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -35,6 +34,26 @@
       :total="totalCount"
       class="comment-page"
     ></el-pagination>
+
+    <!-- 查看弹出框 -->
+    <el-dialog :title="dialogName" :visible.sync="dialogVisible">
+      <el-form>
+        <el-form-item label="id">
+          <el-input autocomplete="off" v-model="ruleForm.id" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="标签名称">
+          <el-input autocomplete="off" v-model="ruleForm.title"></el-input>
+        </el-form-item>
+
+        <el-form-item label="文章数量">
+          <el-input autocomplete="off" :disabled="true" v-model="ruleForm.citationCount"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" v-show="dialogName!='查看'" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -56,10 +75,11 @@ export default {
       },
       paging: {
         tiele: "", //模糊查询
-        currentPage: 1, //初始页
-        pagesize: 5 //    每页的数据
+        pageIndex: 1, //初始页
+        pageSize: 5 //    每页的数据
       },
-      dialogVisible: false
+      dialogVisible: false,
+      dialogName: ""
     };
   },
   methods: {
@@ -69,17 +89,31 @@ export default {
       "insertBlogTag",
       "delteBlogTag"
     ]),
-    update(row) {
+    updateBlogTag() {
+      this.updateBlogTag(this.ruleForm);
+    },
+    getBlogTag(row) {
+      //查看
+     this.setdialy(row, false);
+    },
+    setdialy(data, status) {
       this.dialogVisible = true;
-      //显示编辑数据
-      this.ruleForm.title = row.title;
-      this.ruleForm.id = row.id;
+      this.dialogName = status ? "编辑" : "查看";
+
+      Object.keys(this.ruleForm).forEach(s => {
+        this.ruleForm[s] = data[s];
+      });
     },
     handleSizeChange: function(size) {
-      this.paging.pagesize = size; //每页下拉显示数据
+      this.paging.pageSize = size; //每页下拉显示数据
+      this.getBlogTagwhereData(this.paging);
     },
     handleCurrentChange: function(currentPage) {
-      this.paging.currentPage = currentPage; //点击第几页
+      this.paging.pageIndex = currentPage; //点击第几页
+      this.getBlogTagwhereData(this.paging);
+    },
+    delteBlogTags(id) {
+      this.delteBlogTag({ blogtagtId: id, data: this.paging });
     }
   },
   computed: {
@@ -87,7 +121,6 @@ export default {
   },
   created() {
     this.getBlogTagwhereData(this.paging);
-    console.log( "数据",this.paging)
   }
 };
 </script>
@@ -114,13 +147,11 @@ export default {
   position: relative;
 }
 .blogTag-table {
-  height: 500px;
+  min-height: 500px;
   overflow: hidden;
 }
 .blogTag-page {
   position: ab;
   bottom: 0;
 }
-
-
 </style>

@@ -1,6 +1,7 @@
 import api from '@/api/index'
 import { blogpost } from '@/views/demo/blogpost/blogPostList';
 import { formatUrlParams } from '@/utils'
+import { Message, MessageBox } from 'element-ui';
 
 export default {
   namespaced: true,
@@ -37,31 +38,33 @@ export default {
         Object.keys(data).forEach(key => {
           result[key] = key != 'pageIndex' ? data[key] : data[key] - 1;
         });
-
-        api.get(`/tag/${formatUrlParams(result)}`, null, res => {
-
-          console.log("tag", res, result);
-
+        api.get(`/tag/getALL${formatUrlParams(result)}`, null, res => {
           commit('setBlogTags', res.data);
-          commit('getTotalCount', res.totalCount);
+          commit('setTotalCount', res.totalCount);
           resolve();
         })
-
       })
     },
-
     getBlogTag({ commit }, blogPostTagId) {
       api.get("/tag/blogPostTagId", null, res => {
-        commit('getBlogTags', res);
+        commit('setBlogTags', res);
       })
     },
-
     updateBlogTag({ commit }, data) {
-
+      var action = {
+        url: '/tag',
+        data: data,
+        methods: 'post',
+        success: function(res) {
+          Message({ message: "标签编辑成功", type: "success" });
+        }
+      }
+      dispatch('fetchBlogPost', action);
 
     },
     insertBlogTag({ dispatch, commit }, data) {
       var action = {
+        url: '/tag',
         data: data,
         methods: 'post',
         success: function(res) {
@@ -70,17 +73,27 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
-    delteBlogTag({ dispatch, commit }, blogTagId) {
-      var action = {
-        data: data,
-        methods: 'delete',
-        success: function(res) {
-          Message({ message: "标签删除成功", type: "success" });
-        }
-      }
-      dispatch('fetchBlogPost', action);
+    delteBlogTag({ dispatch, commit }, blogData) {
+      MessageBox.confirm("此操作将删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        api.delete(
+          `/tag?blogTagId=${blogData.blogtagtId}`,
+          null,
+          res => {
+            if (res.statusCode != 0) {
+              Message({ message: res.result, type: 'error' });
+            } else {
+              dispatch('getBlogTagwhereData', blogData.data);
+              Message({ message: "删除成功", type: "success" });
+            }
+          }
+        )
+      })
     },
-    fetchBlogPost({ commit }, { data, methods, success }) {
+    fetchBlogPost({ commit }, { url, data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
       Object.keys(data).forEach(key => {
@@ -88,7 +101,7 @@ export default {
       });
 
       api[methods](
-        "/tag",
+        url,
         formData,
         res => {
           if (res.statusCode != 0) {

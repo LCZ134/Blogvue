@@ -1,21 +1,20 @@
 <template>
   <div class="comment">
+    <el-form :inline="true" :model="form" class="demo-form-inline">
+      <el-form-item label="用户">
+        <el-input placeholder="请输入内容" v-model="form.UserName"></el-input>
+      </el-form-item>
 
-			<el-form :inline="true" :model="form" class="demo-form-inline">
-				<el-form-item label="用户">
-					<el-input  placeholder="请输入内容"></el-input>
-				</el-form-item>
+      <el-form-item label="时间">
+        <el-date-picker type="date" placeholder="开始日期" v-model="form.dateFrom"></el-date-picker>
+        <span>-</span>
+        <el-date-picker type="date" placeholder="结束日期" v-model="form.dateTo"></el-date-picker>
+      </el-form-item>
 
-				<el-form-item label="时间">
-					<el-date-picker type="date" placeholder="开始日期" v-model="form.dateFrom"></el-date-picker>
-					<span>-</span>
-					<el-date-picker type="date" placeholder="结束日期" v-model="form.dateTo"></el-date-picker>
-				</el-form-item>
-
-				<el-form-item>
-					<el-button type="primary" @click="getBlogComment()">查询</el-button>
-				</el-form-item>
-			</el-form>
+      <el-form-item>
+        <el-button type="primary" @click="getBlogComment()">查询</el-button>
+      </el-form-item>
+    </el-form>
 
     <div class="comment-table">
       <el-table style="width: 100%;" :data="blogCommentList">
@@ -25,28 +24,29 @@
             <span style="margin-left: 10px">{{ scope.row.createOn }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="文章编号" prop="blogPostId" width="180"></el-table-column>
-				<el-table-column
-					label="姓名"
-					width="180">
-					<template slot-scope="scope">
-						<el-popover trigger="hover" placement="top">
-							<div class="comment-pop">
-								<p><img :src="scope.row.user.avatarUrl"></p>
-								<p>性别: {{ scope.row.user.gender | genderStatus}}</p>
-							</div>
-							<div slot="reference" class="name-wrapper">
-								<el-tag class="nickname" size="medium">{{ scope.row.user.nickName }}</el-tag>
-							</div>
-						</el-popover>
-					</template>
-				</el-table-column>
+
+        <el-table-column label="姓名" width="180">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <div class="comment-pop">
+                <p>
+                  <img :src="scope.row.user.avatarUrl" />
+                </p>
+                <p>性别: {{ scope.row.user.gender | genderStatus}}</p>
+              </div>
+              <div slot="reference" class="name-wrapper">
+                <el-tag class="nickname" size="medium">{{ scope.row.user.nickName }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
 
         <el-table-column label="评论" width="400">
           <template slot-scope="scope">
             <p v-html="scope.row.content"></p>
           </template>
         </el-table-column>
+
         <el-table-column label="是否显示">
           <template slot-scope="scope">
             <p>{{scope.row.isHidden | fromatStatus}}</p>
@@ -55,14 +55,15 @@
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
+            <el-button @click="showDialog(scope.row.id)" size="mini">查看</el-button>
+
             <el-button @click="HideBlogComment(scope.row.id)" size="mini">显示</el-button>
             <el-button @click="ShowBlogComment(scope.row.id)" size="mini">隐藏</el-button>
-            <el-button @click="deleteBlogComment(scope.row.id)" size="mini" type="danger">删除</el-button>
+            <el-button @click="deleteComment(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -73,6 +74,19 @@
       :total="totalCount"
       class="comment-page"
     ></el-pagination>
+
+    <!-- 查看弹出框 -->
+    <el-dialog title="评论" :visible.sync="dialogTableVisible">
+      <el-collapse accordion v-show="blogCommentChild.length>0">
+        <el-collapse-item
+          v-for="item in blogCommentChild"
+          :key="item.id"
+          :title="item.user.nickName "
+        >
+          <div v-html="item.content"></div>
+        </el-collapse-item>
+      </el-collapse>
+    </el-dialog>
   </div>
 </template>
 
@@ -84,20 +98,25 @@ export default {
     return {
       form: {
         UserId: "",
+        UserName:"",
         BlogPostId: "",
         dateFrom: "",
         dateTo: "",
         pageIndex: 1, //初始页
-        pageSize: 5 //    每页的数据
-      }
+        pageSize: 5 // 每页的数据,
+      },
+      dialogTableVisible: false,
+      parentId: "" //父评论
     };
   },
   methods: {
-    ...mapActions("admin/blogComment", ["getBlogCommentData","HideBlogComment","ShowBlogComment","deleteBlogComment"]),
-		//修改
-		
-    //删除
-    deleteBlogPost(id) {},
+    ...mapActions("admin/blogComment", [
+      "getBlogCommentData",
+      "HideBlogComment",
+      "ShowBlogComment",
+      "deleteBlogComment",
+      "getBlogChildData"
+    ]),
     //搜索
     handleSizeChange(size) {
       this.form.pageSize = size;
@@ -106,24 +125,40 @@ export default {
     handleCurrentChange(index) {
       this.form.pageIndex = index;
       this.getBlogCommentData(this.form);
-		},
-		getBlogComment(){
+    },
+    getBlogComment() {
+      this.getBlogCommentData(this.form);
+    },
+    showDialog(CommentId) {
+      this.getBlogChildData(CommentId);
 
-		}
+      if (this.blogCommentChild.length > 0) {
+        this.dialogTableVisible = true;
+      } else {
+        this.$message({ message: "没有子评论" });
+      }
+    },
+    deleteComment(id){
+      this.deleteBlogComment({blogCommentId:id,data:this.form})
+    }
   },
   computed: {
-    ...mapState("admin/blogComment", ["blogCommentList", "totalCount"])
+    ...mapState("admin/blogComment", [
+      "blogCommentList",
+      "totalCount",
+      "blogCommentChild"
+    ])
   },
   created() {
-		this.getBlogCommentData(this.form);
+    this.getBlogCommentData(this.form);
   },
   filters: {
     fromatStatus(val) {
       return val == 0 ? "否" : "是";
-		},
-		genderStatus(val){
-			return val == 0 ? "男" : "女";
-		}
+    },
+    genderStatus(val) {
+      return val == 0 ? "男" : "女";
+    }
   }
 };
 </script>
@@ -133,17 +168,17 @@ export default {
   position: relative;
 }
 .comment-table {
-  height: 500px;
+  min-height: 500px;
   overflow: hidden;
 }
 .comment-page {
   position: ab;
   bottom: 0;
 }
-.nickname{
-	cursor: pointer;
+.nickname {
+  cursor: pointer;
 }
-.comment-pop{
-	display: flex;
+.comment-pop {
+  display: flex;
 }
 </style>
