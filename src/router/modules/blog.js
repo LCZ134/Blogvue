@@ -3,8 +3,7 @@ import Index from '@/components/Index'
 import blogpost from '@/views/demo/blogpost/blogPostList'
 import blogposteditor from '@/views/demo/blogpost/blogposteditor'
 import Taglist from '@/views/demo/taglist'
-import blogComment from '@/views/demo/blogComment/blogCommentList'
-
+import Danmus from '@/views/demo/Danmus/danmusList'
 
 export default {
   path: '/blogpost',
@@ -56,27 +55,17 @@ export default {
         showTab: true
       },
       IsHidden: true,
-    }, {
-      path: '/blogComment',
-      name: '评论列表',
-      component: blogComment,
+    },
+    {
+      path: '/Danmus',
+      name: '弹幕列表',
+      component: Danmus,
       meta: {
-        title: '评论列表',
+        title: '弹幕列表',
         auth: true,
         showTab: true
       },
       IsHidden: true,
-    },
-    // {
-    //   path: '/blogComment',
-    //   name: '弹幕列表',
-    //   component: blogComment,
-    //   meta: {
-    //     title: '弹幕列表',
-    //     auth: true,
-    //     showTab: true
-    //   },
-    //   IsHidden: true,
-    // }
+    }
   ]
 }

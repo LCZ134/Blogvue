@@ -28,34 +28,52 @@
         </el-form>
 
         <div class="comment-table">
-         <el-table style="width: 100%;" :data="bloglist">
-          <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
-          <el-table-column label="用户姓名" prop="user.nickName" width="120"></el-table-column>
-          <el-table-column label="标题" prop="title" width="180"></el-table-column>
-          <el-table-column label="描述" prop="describe" width="400"></el-table-column>
-          <el-table-column label="点赞数" prop="like"></el-table-column>
-          <el-table-column label="公开">
-            <template slot-scope="scope">
-              <p>{{scope.row.isHidden | fromatStatus}}</p>
-            </template>
-          </el-table-column>
+          <el-table style="width: 100%;" :data="bloglist">
+            <el-table-column label="标题" prop="title" width="180"></el-table-column>
 
-          <el-table-column label="是否置顶">
-            <template slot-scope="scope">
-              <p>{{scope.row.isTop | fromatStatus}}</p>
-            </template>
-          </el-table-column>
+            <el-table-column label="标签" width="180">
+              <template slot-scope="scope">
+                <el-tag
+                  v-show="scope.row.tags.length>0"
+                  v-for="item in scope.row.tags"
+                  :key="item.id"
+                  class="blogtag"
+                >{{item.title}}</el-tag>
 
-          <el-table-column fixed="right" label="操作">
-            <template slot-scope="scope">
-              <el-button @click="hiddenClick(scope.row.id)" type="text" size="small">查看</el-button>
-              <el-button @click="handleClick(scope.row.id)" type="text" size="small">编辑</el-button>
-              <el-button @click="deleteBlogPost(scope.row.id)" type="text" size="small">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+                <p v-show="scope.row.tags.length<=0">未添加标签</p>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="简介" width="400">
+              <template slot-scope="scope">
+                <p class="infinite">{{scope.row.describe}}</p>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="点赞数" prop="like"></el-table-column>
+            <el-table-column label="评论数" prop="commentCount"></el-table-column>
+            <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
+            <el-table-column label="公开">
+              <template slot-scope="scope">
+                <p>{{scope.row.isHidden | fromatStatus}}</p>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="是否置顶">
+              <template slot-scope="scope">
+                <p>{{scope.row.isTop | fromatStatus}}</p>
+              </template>
+            </el-table-column>
+
+            <el-table-column fixed="right" label="操作">
+              <template slot-scope="scope">
+                <el-button @click="hiddenClick(scope.row.id)" type="text" size="small">查看</el-button>
+                <el-button @click="handleClick(scope.row.id)" type="text" size="small">编辑</el-button>
+                <el-button @click="deleteBlogPost(scope.row.id)" type="text" size="small">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
-
 
         <el-pagination
           @size-change="handleSizeChange"
@@ -160,5 +178,20 @@ export default {
 }
 .clearfix:after {
   clear: both;
+}
+.infinite {
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  background: #e8f3fe;
+  color: #7dbcfc;
+  display: flex;
+  padding-left: 4px;
+}
+.blogtag {
+  min-width: 60px;
+  text-align: center;
+  margin: 2px;
+  cursor: pointer;
 }
 </style>

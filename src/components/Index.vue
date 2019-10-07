@@ -3,15 +3,8 @@
     <el-container style="height: 500px; border: 1px solid #eee">
       <!-- 头部-->
       <el-header style="text-align: right; font-size: 12px">
-        <el-dropdown>
-          <i class="el-icon-setting" style="margin-right: 15px"></i>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>我的消息</el-dropdown-item>
-            <el-dropdown-item>设置</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logouts">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-          <span>{{userinfo.nickName}}</span>
-        </el-dropdown>
+        <TapHeader></TapHeader>
+
       </el-header>
       <!-- 内容部分-->
       <el-container>
@@ -34,6 +27,8 @@
 <script>
 import Main from "./main";
 import saide from "./saide";
+import TapHeader from './header';
+
 import PrettyTabs from "@/components/pretty-tabs";
 
 import { mapState, mapMutations, mapActions } from "vuex";
@@ -42,7 +37,8 @@ export default {
   components: {
     saide,
     Main,
-    PrettyTabs
+    PrettyTabs,
+    TapHeader
   },
   data() {
     return {

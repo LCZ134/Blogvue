@@ -7,7 +7,7 @@ import UserAdd from '@/views/demo/User/useradd'
 
 import BlogPost from './modules/blog'
 import System from './modules/system'
-
+import commont from './modules/comment'
 
 const frameIn = [{
     path: '/',
@@ -62,7 +62,9 @@ const frameIn = [{
     ]
   },
   BlogPost,
-  System
+  commont,
+  System,
+
 ]
 
 /**

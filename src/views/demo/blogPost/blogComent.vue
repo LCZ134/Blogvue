@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="编辑" :visible.sync="selectComment.status" width="60%" center>
+    <el-dialog title="查看" :visible.sync="selectComment.status" width="60%" center>
         <div class="mavonEditor">
           <mavon-editor v-model="selectComment.blogContent" :toolbars="markdownOption"  />
         </div>
@@ -56,3 +56,4 @@ export default {
   }
 };
 </script>
+

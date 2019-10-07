@@ -1,18 +1,62 @@
 <template>
   <div class="home">
+    <el-row :gutter="12">
+      <el-col :span="6" v-for="item in 4" :key="item">
+        <el-card shadow="always">
+          <div class="alway">
+            <div class="alway-title">
+              <p>今日阅读文章</p>
+              <p>45</p>
+            </div>
+            <div class="alway-icon">
+              <i class="el-icon-edit"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
     <el-row :gutter="20">
-      <el-col :span="12">
+      <el-col :span="8">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>卡片名称</span>
               <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
             </div>
-            <div v-for="o in 4" :key="o" class="text item">{{'列表内容 ' + o }}</div>
+
+            <div id="chart1"></div>
           </el-card>
         </div>
       </el-col>
-      <el-col :span="12">
+
+      <el-col :span="8">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>用户</span>
+              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+            </div>
+            <div id="doughnut"></div>
+          </el-card>
+        </div>
+      </el-col>
+
+      <el-col :span="8">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>用户</span>
+              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+            </div>
+            <div class="text item">{{userinfo.nickName}}</div>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+      <el-col :span="24">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
@@ -30,13 +74,15 @@
 import { mapState } from "vuex";
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
-    ...mapState(
-      "admin/user",["userinfo"]
-    )
+    ...mapState("admin/user", ["userinfo"])
+  },
+  mounted() {
+    this.$chart.Customized("chart1");
+
+    this.$chart.Doughnut("doughnut");
   }
 };
 </script>
@@ -76,5 +122,27 @@ export default {
 }
 .clearfix:after {
   clear: both;
+}
+/* 图表 */
+#chart1,#doughnut{
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+/* 头 */
+.alway {
+  display: flex;
+}
+.alway .alway-title {
+  flex: 1;
+}
+.alway .alway-title p {
+  margin: 2px;
+}
+.alway .alway-icon {
+  text-align: right;
+  flex: 1;
+  font-size: 30px;
 }
 </style>

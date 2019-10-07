@@ -132,6 +132,9 @@ export default {
       )
     },
     updateBlogPost({ dispatch, commit }, data) {
+
+      console.log("提交的数据", data);
+
       var action = {
         data: data,
         methods: 'patch',

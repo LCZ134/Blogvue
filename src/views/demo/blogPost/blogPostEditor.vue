@@ -167,6 +167,7 @@ export default {
     ]),
     loadPageData() {
       this.blogPostId = this.$route.params.id;
+
       if (this.$route.params.id != null && this.blogPostId != ":id") {
         this.getBlogPost(this.blogPostId).then(() => {
           Object.keys(this.form).forEach(key => {
@@ -176,18 +177,27 @@ export default {
 
             if (key == "tags") {
               this.form[key] = obj.map(i => i.id);
-            } else if (key == "bannerUrl") {
+            } 
+            else if (key == "bannerUrl") {
+
               //这里还需要判断是否是网页链接
               var re = /(http|https):\/\/([\w.]+\/?)\S*/;
+
               obj = re.test(obj) ? obj : `.${obj}`;
+
               this.fileList = [{ name: "filePath.jpg", url: obj }];
+
               this.oldImageUrl = obj;
+
+              this.form[key] = obj;
             } else {
               this.form[key] = obj;
             }
           });
         });
       }
+
+      console.log("页面数据",this.form);
 
       this.getBlogTagData().then(() => {
         this.blogTags = this.blogTagList;
@@ -239,21 +249,23 @@ export default {
     },
     submitFile() {
       if (this.fileList.length <= 0) {
-        this.$message.error("未上传图片");
         return false;
       }
 
-      // if (
-      //   this.form.id != null &&
-      //   this.form.id.length > 0 &&
-      //   this.oldImageUrl == this.dialogImageUrl
-      // )return false;
+      if (this.oldImageUrl == this.dialogImageUrl) {
+
+         console.log("这是旧的图片")
+      }
+
+      return false;
 
       const formData = new FormData();
       formData.append("file", this.fileList[0].raw);
       this.$api.post("/file", formData, res => {
         if (res[0].statusCode == 0) {
-          this.form.bannerUrl = `.${res[0].extends.path}`;
+          this.form.bannerUrl = `${res[0].extends.path}`;
+
+          console.log("返回的图片路径", res[0].extends.path);
         } else {
           this.$message.error(res.result);
         }
@@ -274,11 +286,11 @@ export default {
   mounted() {
     this.loadPageData();
   },
- watch: {
+  watch: {
     $router(to, from) {
-      console.log('路由发生了变化',this.$route.query);
+      console.log("路由发生了变化", this.$route.query);
     }
-  },
+  }
 };
 </script>
 

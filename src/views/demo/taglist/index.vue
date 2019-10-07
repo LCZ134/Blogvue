@@ -51,7 +51,7 @@
       </el-form>
       <div slot="footer" v-show="dialogName!='查看'" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="update">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -87,9 +87,11 @@ export default {
       "getBlogTagData",
       "getBlogTagwhereData",
       "insertBlogTag",
-      "delteBlogTag"
+      "delteBlogTag",
+      "updateBlogTag"
     ]),
-    updateBlogTag() {
+    update() {
+     this.dialogVisible = false;
       this.updateBlogTag(this.ruleForm);
     },
     getBlogTag(row) {

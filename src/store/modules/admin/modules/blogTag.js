@@ -1,5 +1,4 @@
 import api from '@/api/index'
-import { blogpost } from '@/views/demo/blogpost/blogPostList';
 import { formatUrlParams } from '@/utils'
 import { Message, MessageBox } from 'element-ui';
 
@@ -50,11 +49,11 @@ export default {
         commit('setBlogTags', res);
       })
     },
-    updateBlogTag({ commit }, data) {
+    updateBlogTag({ dispatch, commit }, data) {
       var action = {
         url: '/tag',
         data: data,
-        methods: 'post',
+        methods: 'patch',
         success: function(res) {
           Message({ message: "标签编辑成功", type: "success" });
         }
@@ -94,7 +93,9 @@ export default {
       })
     },
     fetchBlogPost({ commit }, { url, data, methods, success }) {
+
       if (!data) return;
+
       const formData = new FormData();
       Object.keys(data).forEach(key => {
         formData.append(key, data[key]);

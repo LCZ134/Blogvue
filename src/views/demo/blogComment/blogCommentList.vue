@@ -55,10 +55,9 @@
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="showDialog(scope.row.id)" size="mini">查看</el-button>
-
+            <el-button @click="showDialog(scope.row.id)" size="mini">子评论</el-button>
             <el-button @click="HideBlogComment(scope.row.id)" size="mini">显示</el-button>
-            <el-button @click="ShowBlogComment(scope.row.id)" size="mini">隐藏</el-button>
+            <!-- <el-button @click="ShowBlogComment(scope.row.id)" size="mini">隐藏</el-button> -->
             <el-button @click="deleteComment(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>

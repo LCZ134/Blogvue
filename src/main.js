@@ -34,6 +34,11 @@ Vue.prototype.$axios = Axios;
 Vue.prototype.$api = api
 Vue.config.productionTip = false
 
+//Charts
+import myCharts from '@/comm/myCharts'
+
+Vue.use(myCharts)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
