@@ -1,5 +1,6 @@
 import api from '@/api/index'
 import { formatUrlParams } from '@/utils'
+import Cookies from 'js-cookie'
 
 export default {
   namespaced: true,
@@ -15,11 +16,8 @@ export default {
       state.userinfo = userinfo;
     },
     loginout(state) {
-
-      // Cookies.set('user', null, {
-      //   expire: -1
-      // });
-
+      //console.log("退出", Cookies.get('token'));
+      Cookies.remove('token');
       sessionStorage.removeItem("user");
     },
     setUserlist(state, data) {

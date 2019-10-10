@@ -28,16 +28,16 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="注册时间" >
+        <!-- <el-table-column label="注册时间" >
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.createOn }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
           
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-              <el-button  size="mini" >查看</el-button>
+              <el-button size="mini" >查看</el-button>
             <el-button @click="updateBlack(scope.row.id)" size="mini" type="danger">编辑</el-button>
           </template>
         </el-table-column>

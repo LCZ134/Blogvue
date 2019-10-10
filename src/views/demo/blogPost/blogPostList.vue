@@ -46,22 +46,35 @@
 
             <el-table-column label="简介" width="400">
               <template slot-scope="scope">
-                <p class="infinite">{{scope.row.describe}}</p>
+                <p>{{scope.row.describe | isNullContext}}</p>
               </template>
             </el-table-column>
 
             <el-table-column label="点赞数" prop="like"></el-table-column>
-            <el-table-column label="评论数" prop="commentCount"></el-table-column>
+
+            <el-table-column label="评论数">
+              <template slot-scope="scope">
+                <p @click="getComment(scope.row.id)">{{scope.row.commentCount }}</p>
+              </template>
+            </el-table-column>
+
             <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
             <el-table-column label="公开">
               <template slot-scope="scope">
-                <p>{{scope.row.isHidden | fromatStatus}}</p>
+                <el-switch
+                  v-model="scope.row.isHidden"
+                  @change="showChange(scope.row.isHidden,scope.row.id)"
+                ></el-switch>
               </template>
             </el-table-column>
 
             <el-table-column label="是否置顶">
               <template slot-scope="scope">
-                <p>{{scope.row.isTop | fromatStatus}}</p>
+                <!-- <p>{{scope.row.isTop | fromatStatus}}</p>  -->
+                <el-switch
+                  v-model="scope.row.isTop"
+                  @change="topChange(scope.row.isTop,scope.row.id)"
+                ></el-switch>
               </template>
             </el-table-column>
 
@@ -69,7 +82,7 @@
               <template slot-scope="scope">
                 <el-button @click="hiddenClick(scope.row.id)" type="text" size="small">查看</el-button>
                 <el-button @click="handleClick(scope.row.id)" type="text" size="small">编辑</el-button>
-                <el-button @click="deleteBlogPost(scope.row.id)" type="text" size="small">删除</el-button>
+                <el-button @click="removeBlog(scope.row.id)" type="text" size="small">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -87,7 +100,21 @@
       </div>
     </div>
 
+    <!-- 查看文章 -->
     <BlogComent></BlogComent>
+
+    <!-- 查看弹出框 -->
+    <el-dialog title="评论" :visible.sync="dialogTableVisible">
+      <el-collapse accordion>
+        <el-collapse-item
+          v-for="item in blogCommentList"
+          :key="item.id"
+          :title="item.user.nickName "
+        >
+          <div v-html="item.content"></div>
+        </el-collapse-item>
+      </el-collapse>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,6 +126,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      dialogTableVisible: false,
       form: {
         keyword: "",
         tags: [],
@@ -123,6 +151,7 @@ export default {
       "OpenCular"
     ]),
     ...mapActions("admin/blogTag", ["getBlogTagData"]),
+    ...mapActions("admin/blogComment", ["getBlogCommentData"]),
     handleSizeChange: function(size) {
       this.form.pageSize = size; //每页显示多少条数据
       this.getBlogwhereData(this.form);
@@ -142,15 +171,42 @@ export default {
     },
     selectTag() {
       console.log(this.form.tags);
+    },
+    getComment(blogpostId) {
+      this.getBlogCommentData({ BlogPostId: blogpostId }).then(i => {
+        if (this.blogCommentList.length > 0) {
+          this.dialogTableVisible = true;
+        } else {
+          this.$message({ message: "没有评论" });
+        }
+      });
+    },
+    removeBlog(id) {
+      this.deleteBlogPost(id);
+      this.getBlogwhereData(this.form);
+    },
+    showChange(status, id) {
+      alert("处理中");
+    },
+    topChange(status, id) {
+      alert("处理中");
     }
   },
   computed: {
     ...mapState("admin/blogPost", ["bloglist", "totalCount", "selectComment"]),
-    ...mapState("admin/blogTag", ["blogTagList"])
+    ...mapState("admin/blogTag", ["blogTagList"]),
+    ...mapState("admin/blogComment", ["blogCommentList"])
   },
   filters: {
     fromatStatus(val) {
       return val == 0 ? "否" : "是";
+    },
+    isNullContext(obj) {
+      return obj == null && obj.lenght <= 0
+        ? "暂无数据"
+        : obj.length > 50
+        ? `${obj.substring(0, 50)}...`
+        : obj;
     }
   },
   components: {

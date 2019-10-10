@@ -13,19 +13,32 @@ export default {
   },
   mutations: {
     setblogComment(state, data) {
-      state.blogCommentList = data;
+      state.blogCommentList = [];
+      var newdata = data.map(s => {
+        var result = {};
+        Object.keys(s).forEach(i => {
+          if (i == "isHidden") {
+            result[i] = parseInt(s[i]) > 0 ? true : false;
+          } else {
+            result[i] = s[i];
+          }
+        })
+        return result;
+      })
+      state.blogCommentList = newdata;
     },
     setTotalCount(state, count) {
       state.totalCount = count;
     },
     setBlogCommentChild(state, data) {
+      state.blogCommentChild = [];
       state.blogCommentChild = data;
     },
     deleteBlogComment(state, blogCommentId) {
       state.blogCommentList = state.blogCommentList.filter(s => s.id != blogCommentId);
     },
     toggleBlogComment(state, data) {
-      state.blogCommentList.forEach(s => s.IsHidden = s.id == data.id ? data.IsHidden : !data.IsHidden);
+      state.blogCommentList.forEach(s => s.isHidden = s.id == data.id ? data.isHidden : !data.isHidden);
     }
   },
   actions: {
@@ -36,8 +49,7 @@ export default {
         Object.keys(data).forEach(key => {
           result[key] = key != 'pageIndex' ? data[key] : data[key] - 1;
         });
-
-        api.get(`/Comment/GetAll${formatUrlParams(result)}`, null, res => {
+        api.get(`/Comment${formatUrlParams(result)}`, null, res => {
           commit('setblogComment', res.data);
           commit('setTotalCount', res.totalCount);
           resolve();
@@ -47,7 +59,7 @@ export default {
     //获取子评论
     getBlogChildData({ commit }, parenId) {
       return new Promise((resolve, reject) => {
-        api.get(`/Comment/GetAll?ParentId=${parenId}`, null, res => {
+        api.get(`/Comment?ParentId=${parenId}`, null, res => {
           commit('setBlogCommentChild', res.data);
           resolve();
         })
@@ -74,57 +86,22 @@ export default {
         )
       })
     },
-    //显示评论
-    HideBlogComment({ commit, state }, blogCommentId) {
 
-      if (state.blogCommentList.find(s => s.id == blogCommentId).isHidden != 0) {
-        Message({ message: "已经为显示", type: 'error' });
-        return false;
-      }
-      const formData = new FormData();
-      formData.append("id", blogCommentId);
-
-      MessageBox.confirm("此操作将显示评论, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: 'warning'
-      }).then(() => {
-        api.post("/Comment/ShowBlogComment", formData, res => {
-          if (res.statusCode != 0) {
-            Message({ message: res.result, type: 'error' });
-          } else {
-            commit('toggleBlogComment', { id: blogCommentId, IsHidden: true });
-            Message({ message: "操作成功", type: "success" });
-          }
-
-        })
-      })
-    },
-    //隐藏评论
-    ShowBlogComment({ commit, state }, blogCommentId) {
-
-      if (state.blogCommentList.find(s => s.id == blogCommentId).isHidden != 1) {
-        Message({ message: "已经为隐藏", type: 'error' });
-        return false;
-      };
+    updateBlogComment({ commit, state }, { id, isHidden }) {
 
       const formData = new FormData();
-      formData.append("id", blogCommentId);
+      formData.append("id", id);
+      formData.append("isHidden", isHidden);
 
-      MessageBox.confirm("此操作将显示评论, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: 'warning'
-      }).then(() => {
-        api.post("/Comment/HideBlogComment", formData, res => {
-          if (res.statusCode != 0) {
-            Message({ message: res.result, type: 'error' });
-          } else {
-            commit('toggleBlogComment', { id: blogCommentId, IsHidden: false });
-            Message({ message: "操作成功", type: "success" });
-          }
-        })
+      api.patch(`/comment`, formData, res => {
+        if (res.statusCode != 0) {
+          Message({ message: res.result, type: 'error' });
+        } else {
+          // commit('toggleBlogComment', { id, isHidden });
+          Message({ message: "操作成功", type: "success" });
+        }
       })
+
     }
   }
 }

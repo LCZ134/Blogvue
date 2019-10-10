@@ -2,11 +2,15 @@
   <div class="blogTag">
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item label="名称">
-        <el-input placeholder="请输入内容"></el-input>
+        <el-input placeholder="请输入内容" v-model="paging.title"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" @click="getBlogTag">查询</el-button>
+      </el-form-item>
+
+      <el-form-item style="margin-right: 15px;float: right;">
+        <el-button type="success" @click="addBlogTag">添加</el-button>
       </el-form-item>
     </el-form>
 
@@ -16,7 +20,6 @@
         <el-table-column label="文章数" prop="citationCount"></el-table-column>
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <!-- <el-button @click="getBlogTag(scope.row)" size="mini">查看</el-button> -->
             <el-button @click="setdialy(scope.row, true)" size="mini">编辑</el-button>
             <el-button @click="delteBlogTags(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
@@ -38,14 +41,14 @@
     <!-- 查看弹出框 -->
     <el-dialog :title="dialogName" :visible.sync="dialogVisible">
       <el-form>
-        <el-form-item label="id">
+        <el-form-item label="编号id" v-show="ruleForm.id.length>0">
           <el-input autocomplete="off" v-model="ruleForm.id" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="标签名称">
           <el-input autocomplete="off" v-model="ruleForm.title"></el-input>
         </el-form-item>
 
-        <el-form-item label="文章数量">
+        <el-form-item label="文章数量" v-show="ruleForm.id.length>0">
           <el-input autocomplete="off" :disabled="true" v-model="ruleForm.citationCount"></el-input>
         </el-form-item>
       </el-form>
@@ -74,7 +77,7 @@ export default {
         ]
       },
       paging: {
-        tiele: "", //模糊查询
+        title: "", //模糊查询
         pageIndex: 1, //初始页
         pageSize: 5 //    每页的数据
       },
@@ -91,12 +94,30 @@ export default {
       "updateBlogTag"
     ]),
     update() {
-     this.dialogVisible = false;
-      this.updateBlogTag(this.ruleForm);
+      this.dialogVisible = false;
+
+      if (this.ruleForm.id.length > 0) {
+        this.updateBlogTag({
+          title: this.ruleForm.title,
+          id: this.ruleForm.id
+        }).then(s => {
+          this.getBlogTagwhereData(this.paging);
+        });
+      } else {
+        this.insertBlogTag({
+          title: this.ruleForm.title
+        });
+      }
     },
-    getBlogTag(row) {
+    addBlogTag() {
       //查看
-     this.setdialy(row, false);
+      this.dialogVisible = true;
+      this.dialogName = "添加";
+      this.ruleForm = {
+        title: "",
+        citationCount: 0,
+        id: ""
+      };
     },
     setdialy(data, status) {
       this.dialogVisible = true;
@@ -116,6 +137,9 @@ export default {
     },
     delteBlogTags(id) {
       this.delteBlogTag({ blogtagtId: id, data: this.paging });
+    },
+    getBlogTag(){
+       this.getBlogTagwhereData(this.paging);
     }
   },
   computed: {
@@ -151,9 +175,5 @@ export default {
 .blogTag-table {
   min-height: 500px;
   overflow: hidden;
-}
-.blogTag-page {
-  position: ab;
-  bottom: 0;
 }
 </style>

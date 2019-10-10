@@ -42,7 +42,7 @@ export default {
             return same
           })
 
-          console.log(fullPath, pageOpend);
+          //console.log(fullPath, pageOpend);
 
           if (pageOpend) {
             // 页面以前打开过

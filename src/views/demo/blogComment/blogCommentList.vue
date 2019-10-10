@@ -30,7 +30,7 @@
             <el-popover trigger="hover" placement="top">
               <div class="comment-pop">
                 <p>
-                  <img :src="scope.row.user.avatarUrl" />
+                  <!-- <img :src="scope.row.user.avatarUrl" /> -->
                 </p>
                 <p>性别: {{ scope.row.user.gender | genderStatus}}</p>
               </div>
@@ -49,20 +49,23 @@
 
         <el-table-column label="是否显示">
           <template slot-scope="scope">
-            <p>{{scope.row.isHidden | fromatStatus}}</p>
+            <el-switch
+              @change="commentchange(scope.row.isHidden,scope.row.id)"
+              v-model="scope.row.isHidden"
+            ></el-switch>
           </template>
         </el-table-column>
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="showDialog(scope.row.id)" size="mini">子评论</el-button>
-            <el-button @click="HideBlogComment(scope.row.id)" size="mini">显示</el-button>
-            <!-- <el-button @click="ShowBlogComment(scope.row.id)" size="mini">隐藏</el-button> -->
+
             <el-button @click="deleteComment(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -76,7 +79,7 @@
 
     <!-- 查看弹出框 -->
     <el-dialog title="评论" :visible.sync="dialogTableVisible">
-      <el-collapse accordion v-show="blogCommentChild.length>0">
+      <el-collapse accordion>
         <el-collapse-item
           v-for="item in blogCommentChild"
           :key="item.id"
@@ -96,11 +99,12 @@ export default {
   data() {
     return {
       form: {
-        UserId: "",
-        UserName:"",
-        BlogPostId: "",
+        userId: "",
+        userName: "",
+        blogPostId: "",
         dateFrom: "",
         dateTo: "",
+        showHidden: true,
         pageIndex: 1, //初始页
         pageSize: 5 // 每页的数据,
       },
@@ -111,10 +115,9 @@ export default {
   methods: {
     ...mapActions("admin/blogComment", [
       "getBlogCommentData",
-      "HideBlogComment",
-      "ShowBlogComment",
       "deleteBlogComment",
-      "getBlogChildData"
+      "getBlogChildData",
+      "updateBlogComment"
     ]),
     //搜索
     handleSizeChange(size) {
@@ -129,16 +132,20 @@ export default {
       this.getBlogCommentData(this.form);
     },
     showDialog(CommentId) {
-      this.getBlogChildData(CommentId);
-
-      if (this.blogCommentChild.length > 0) {
-        this.dialogTableVisible = true;
-      } else {
-        this.$message({ message: "没有子评论" });
-      }
+      this.getBlogChildData(CommentId).then(s => {
+        if (this.blogCommentChild.length > 0) {
+          this.dialogTableVisible = true;
+        } else {
+          this.$message({ message: "没有子评论" });
+        }
+      });
     },
-    deleteComment(id){
-      this.deleteBlogComment({blogCommentId:id,data:this.form})
+    deleteComment(id) {
+      this.deleteBlogComment({ blogCommentId: id, data: this.form });
+    },
+    commentchange(status, id) {
+      this.updateBlogComment({ id, isHidden: status ? 1 : 0 });
+      // this.getBlogCommentData(this.form);
     }
   },
   computed: {
@@ -152,11 +159,11 @@ export default {
     this.getBlogCommentData(this.form);
   },
   filters: {
-    fromatStatus(val) {
-      return val == 0 ? "否" : "是";
+    fromatStatus(obj) {
+      return obj == "0" ? "否" : "是";
     },
-    genderStatus(val) {
-      return val == 0 ? "男" : "女";
+    genderStatus(obj) {
+      return obj == 0 ? "男" : "女";
     }
   }
 };
@@ -169,10 +176,6 @@ export default {
 .comment-table {
   min-height: 500px;
   overflow: hidden;
-}
-.comment-page {
-  position: ab;
-  bottom: 0;
 }
 .nickname {
   cursor: pointer;

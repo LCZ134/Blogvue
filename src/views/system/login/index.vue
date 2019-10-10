@@ -10,8 +10,8 @@
       class="demo-ruleForm login-page"
     >
       <h3 class="title">系统登录</h3>
-      <el-form-item prop="username">
-        <el-input type="text" v-model="ruleForm2.username" auto-complete="off" placeholder="用户名"></el-input>
+      <el-form-item prop="email">
+        <el-input type="text" v-model="ruleForm2.email" auto-complete="off" placeholder="用户名"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="密码"></el-input>
@@ -27,16 +27,19 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 
+import { formatUrlParams } from '@/utils'
+
+
 export default {
   data() {
     return {
       logining: false,
       ruleForm2: {
-        username: "管理员",
+        email: "admin@qq.com",
         password: "admin"
       },
       rules2: {
-        username: [{ required: true, message: "输入错误", trigger: "blur" }],
+        email: [{ required: true, message: "输入错误", trigger: "blur" }],
         password: [{ required: true, message: "输入错误", trigger: "blur" }]
       },
       checked: false
@@ -57,10 +60,7 @@ export default {
       this.logining = true;
       //后台登录用户
       this.$api.post(
-        "/User/login?Nickname=" +
-          this.ruleForm2.username +
-          "&PassWord=" +
-          this.ruleForm2.password,
+        `/user/login${formatUrlParams(this.ruleForm2)}`,
         null,
         r => {
           if (r.statusCode != "0") {
@@ -71,13 +71,12 @@ export default {
               message: "登录成功，欢迎您" + r.user.nickName,
               type: "success"
             });
-
+            
             this.$cookie.set("token", r.token, { expires: 30 });
+
             this.logining = false;
             //把用户信息放store里
-
             this.login(r.user);
-
             //直接跳转页面
             this.$router.push("/");
           }

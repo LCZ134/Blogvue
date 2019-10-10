@@ -15,9 +15,6 @@ export default {
     setTotalCount(state, num) {
       state.totalCount = num;
     },
-    setUpdateBlogTags(state, data) {
-
-    },
     setDelBlogTags(state, data) {
       state.blogTagList = state.blogTagList.filter(s => s != data.id);
     }
@@ -50,27 +47,32 @@ export default {
       })
     },
     updateBlogTag({ dispatch, commit }, data) {
-      var action = {
-        url: '/tag',
-        data: data,
-        methods: 'patch',
-        success: function(res) {
-          Message({ message: "标签编辑成功", type: "success" });
+      return new Promise((resolve, reject) => {
+        var action = {
+          url: '/tag',
+          data: data,
+          methods: 'patch',
+          success: function(res) {
+            Message({ message: "标签编辑成功", type: "success" });
+          }
         }
-      }
-      dispatch('fetchBlogPost', action);
-
+        dispatch('fetchBlogPost', action);
+        resolve();
+      })
     },
     insertBlogTag({ dispatch, commit }, data) {
-      var action = {
-        url: '/tag',
-        data: data,
-        methods: 'post',
-        success: function(res) {
-          Message({ message: "标签添加成功", type: "success" });
+      return new Promise((resolve, reject) => {
+        var action = {
+          url: '/tag',
+          data: data,
+          methods: 'post',
+          success: function(res) {
+            Message({ message: "标签添加成功", type: "success" });
+          }
         }
-      }
-      dispatch('fetchBlogPost', action);
+        dispatch('fetchBlogPost', action);
+        resolve();
+      })
     },
     delteBlogTag({ dispatch, commit }, blogData) {
       MessageBox.confirm("此操作将删除, 是否继续?", "提示", {

@@ -10,18 +10,23 @@ export default {
     blogPost: [],
     selectComment: {
       status: false,
-      blogContent: ""
+      blogContent: "",
+      id: ""
     }
   },
   mutations: {
     getBlogPosts(state, data) {
       state.bloglist = data.map(s => {
-        var resilt = {};
-        Object.keys(s).forEach(w => {
-          resilt[w] = (w == "describe") ? (s[w].length > 50 ? `${s[w].substring(0,50)}...` : s[w]) : s[w];
-        });
-        return resilt;
-      });
+        var result = {};
+        Object.keys(s).forEach(i => {
+          if (i == "isHidden" || i == "isTop") {
+            result[i] = parseInt(s[i]) > 0 ? true : false;
+          } else {
+            result[i] = s[i];
+          }
+        })
+        return result;
+      })
     },
     getTotalCount(state, Count) {
       state.totalCount = Count;
@@ -39,6 +44,7 @@ export default {
       state.bloglist = state.bloglist.filter(s => s.id != blogPostId);
     },
     updataCulars(state, data) {
+      state.selectComment.id = data.id;
       state.selectComment.status = data.status;
       state.selectComment.blogContent = state.bloglist.find(s => s.id == data.id).mdContent;
     },
@@ -93,6 +99,7 @@ export default {
             } else {
               commit('deleteBlogPost', blogPostId);
               Message({ message: "删除成功", type: "success" });
+
             }
           }
         )
@@ -109,12 +116,17 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
+
     fetchBlogPost({ commit }, { data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
 
       Object.keys(data).forEach(key => {
-        formData.append(key, data[key]);
+        if (typeof data[key] === "boolean") {
+          formData.append(key, data[key] ? "1" : "0");
+        } else {
+          formData.append(key, data[key]);
+        }
       });
 
       api[methods](
@@ -132,8 +144,6 @@ export default {
       )
     },
     updateBlogPost({ dispatch, commit }, data) {
-
-      console.log("提交的数据", data);
 
       var action = {
         data: data,

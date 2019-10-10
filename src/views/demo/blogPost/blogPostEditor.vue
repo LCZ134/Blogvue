@@ -32,8 +32,9 @@
           <el-switch v-model="form.isHidden"></el-switch>
         </el-form-item>
         <el-form-item label="是否置顶">
-          <el-switch v-model="form.isTog"></el-switch>
+          <el-switch v-model="form.isTop"></el-switch>
         </el-form-item>
+
         <el-form-item label="预览图">
           <div v-show="isfile">
             <el-upload
@@ -48,7 +49,6 @@
               multiple
               :auto-upload="false"
               :on-preview="handlePictureCardPreview"
-              :on-remove="handleRemovePicture"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -151,8 +151,10 @@ export default {
         preview: true // 预览
       },
       selectedCategorySpe: this.selectedCategory,
+
       dialogImageUrl: "", //预览图片路径
       oldImageUrl: "", //旧的图片路径
+
       dialogVisible: false, //是否显示预览图片
       fileList: [],
       isfile: true
@@ -165,39 +167,44 @@ export default {
       "insertBlogPost",
       "updateBlogPost"
     ]),
+    ...mapActions("admin/page", ["close"]),
     loadPageData() {
       this.blogPostId = this.$route.params.id;
 
       if (this.$route.params.id != null && this.blogPostId != ":id") {
         this.getBlogPost(this.blogPostId).then(() => {
+          
           Object.keys(this.form).forEach(key => {
+            
             var obj = this.blogPost[this.blogPostId][key];
-
             if (obj == null || obj.length <= 0) return false;
-
-            if (key == "tags") {
-              this.form[key] = obj.map(i => i.id);
-            } 
-            else if (key == "bannerUrl") {
-
-              //这里还需要判断是否是网页链接
-              var re = /(http|https):\/\/([\w.]+\/?)\S*/;
-
-              obj = re.test(obj) ? obj : `.${obj}`;
-
-              this.fileList = [{ name: "filePath.jpg", url: obj }];
-
-              this.oldImageUrl = obj;
-
-              this.form[key] = obj;
-            } else {
-              this.form[key] = obj;
+            switch (key) {
+              case "tags":
+                this.form[key] = obj.map(i => i.id);
+                break;
+              case "bannerUrl":
+                var re = /(http|https):\/\/([\w.]+\/?)\S*/;
+                this.fileList = [
+                  { name: "filePath.jpg", url: re.test(obj) ? obj : `.${obj}` }
+                ];
+                this.dialogImageUrl = obj;
+                this.oldImageUrl = obj;
+                this.form[key] = obj;
+                break;
+              case "isHidden":
+                this.form[key] = obj === 0 ? false : true;
+                break;
+              case "isTop":
+                this.form[key] = obj === 0 ? false : true;
+                break;
+              default:
+                this.form[key] = obj;
+                break;
             }
           });
         });
       }
-
-      console.log("页面数据",this.form);
+      console.log(this.form);
 
       this.getBlogTagData().then(() => {
         this.blogTags = this.blogTagList;
@@ -206,12 +213,12 @@ export default {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          if (this.isfile) this.submitFile();
-          if (this.form.id != null && this.form.id.length > 0) {
-            this.updateBlogPost(this.form);
+          if (this.isfile) {
+            this.submitFile().then(() => {
+              this.submitData();
+            });
           } else {
-            this.insertBlogPost(this.form);
-            this.resetForm("form");
+            this.submitData();
           }
         } else {
           return false;
@@ -239,37 +246,43 @@ export default {
       return isImage && isLt2M;
     },
     handlePictureCardPreview(file) {
+      //显示预览图
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    handleRemovePicture(file, fileList) {},
     imageChange(file, fileList, name) {
       this.fileList = fileList;
       this.dialogImageUrl = file.url;
     },
     submitFile() {
-      if (this.fileList.length <= 0) {
-        return false;
+      if (this.oldImageUrl === this.dialogImageUrl.replace("..", ".")) {
+        return new Promise((resolve, reject) => {
+          resolve();
+        });
       }
-
-      if (this.oldImageUrl == this.dialogImageUrl) {
-
-         console.log("这是旧的图片")
-      }
-
-      return false;
 
       const formData = new FormData();
       formData.append("file", this.fileList[0].raw);
-      this.$api.post("/file", formData, res => {
-        if (res[0].statusCode == 0) {
-          this.form.bannerUrl = `${res[0].extends.path}`;
-
-          console.log("返回的图片路径", res[0].extends.path);
-        } else {
-          this.$message.error(res.result);
-        }
+      return new Promise((resolve, reject) => {
+        this.$api.post("/file", formData, res => {
+          if (res[0].statusCode == 0) {
+            this.form.bannerUrl = `${res[0].extends.path}`;
+            resolve();
+          } else {
+            this.$message.error(res.result);
+            reject(res.result);
+          }
+        });
       });
+    },
+    submitData() {
+      if (this.form.id != null && this.form.id.length > 0) {
+        this.updateBlogPost(this.form);
+      } else {
+        this.insertBlogPost(this.form);
+        this.resetForm("form");
+      }
+      this.close({ tagName: this.$route.path }); //关闭
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -288,7 +301,7 @@ export default {
   },
   watch: {
     $router(to, from) {
-      console.log("路由发生了变化", this.$route.query);
+      console.log("路由发生了变化", this.$route.params);
     }
   }
 };

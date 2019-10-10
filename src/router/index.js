@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
+import Cookies from 'js-cookie'
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
 
   if (to.path === '/login') {
+    Cookies.remove('token');
     sessionStorage.removeItem('user');
   }
 

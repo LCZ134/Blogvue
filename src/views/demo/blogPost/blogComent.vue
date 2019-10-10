@@ -1,9 +1,13 @@
 <template>
   <div>
     <el-dialog title="查看" :visible.sync="selectComment.status" width="60%" center>
-        <div class="mavonEditor">
-          <mavon-editor v-model="selectComment.blogContent" :toolbars="markdownOption"  />
-        </div>
+      <div class="mavonEditor">
+        <mavon-editor v-model="selectComment.blogContent" :toolbars="markdownOption" />
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="selectComment.status = false">取 消</el-button>
+        <el-button type="primary" @click="updateBlogcomment">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -16,14 +20,25 @@ export default {
     console.log(this.selectComment);
   },
   computed: {
-    ...mapState("admin/blogPost", ["selectComment"])
+    ...mapState("admin/blogPost", ["selectComment", "bloglist"])
   },
   methods: {
-    ...mapActions("admin/blogPost", ["closeCular"])
+    ...mapActions("admin/blogPost", ["closeCular", "updateBlogPost"]),
+    updateBlogcomment() {
+      var date = this.bloglist.find(i => i.id === this.selectComment.id);
+
+      console.log(date);
+
+      // this.updateBlogPost({
+      //   id: this.selectComment.id,
+      //   mdContent: this.selectComment.blogContent
+      // });
+      // this.selectComment.status = false;
+    }
   },
-  data(){
-    return{
-        markdownOption: {
+  data() {
+    return {
+      markdownOption: {
         //配置文本编辑器
         bold: true, // 粗体
         italic: true, // 斜体
@@ -51,8 +66,8 @@ export default {
         alignright: true, // 右对齐
         subfield: true, // 单双栏模式
         preview: true // 预览
-      },
-    }
+      }
+    };
   }
 };
 </script>

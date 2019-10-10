@@ -51,28 +51,7 @@ export default {
   methods: {
     ...mapMutations("admin/user", ["loginout"]),
     ...mapActions("admin/page", ["closeAll"]),
-    logouts: function() {
-      this.$confirm("确认退出?", "提示", {})
-        .then(() => {
-          this.loginout();
-          this.closeAll();
-          this.$router.push("/login");
-        })
-        .catch((e) => {console.log(e)});
-    },
-    getBreadcrumb() {
-      let matched = this.$route.matched.filter(item => item.name);
-      this.levelList = matched;
-    }
   },
-  created() {
-    this.getBreadcrumb();
-  },
-  watch: {
-    $route() {
-      this.getBreadcrumb();
-    }
-  }
 };
 </script>
 
