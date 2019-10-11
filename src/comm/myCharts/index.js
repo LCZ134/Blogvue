@@ -2,7 +2,6 @@
  * 各种画echarts图表的方法都封装在这里
  * 注意：这里echarts没有采用按需引入的方式，只是为了方便学习
  */
-
 import echarts from 'echarts'
 
 const install = function(Vue) {
@@ -11,12 +10,11 @@ const install = function(Vue) {
       get() {
         return {
           Customized: function(id) {
-            this.chart = echarts.init(document.getElementById(id));
+            this.chart = echarts.init(document.getElementById(id), 'purple-passion');
             this.chart.clear();
 
             const option = {
-              backgroundColor: '#2c343c',
-
+              backgroundColor: '#fff',
               title: {
                 text: 'Customized Pie',
                 left: 'center',
@@ -52,31 +50,6 @@ const install = function(Vue) {
                   { value: 400, name: '搜索引擎' }
                 ].sort(function(a, b) { return a.value - b.value; }),
                 roseType: 'radius',
-                label: {
-                  normal: {
-                    textStyle: {
-                      color: 'rgba(255, 255, 255, 0.3)'
-                    }
-                  }
-                },
-                labelLine: {
-                  normal: {
-                    lineStyle: {
-                      color: 'rgba(255, 255, 255, 0.3)'
-                    },
-                    smooth: 0.2,
-                    length: 10,
-                    length2: 20
-                  }
-                },
-                itemStyle: {
-                  normal: {
-                    color: '#c23531',
-                    shadowBlur: 200,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                  }
-                },
-
                 animationType: 'scale',
                 animationEasing: 'elasticOut',
                 animationDelay: function(idx) {
@@ -88,9 +61,11 @@ const install = function(Vue) {
             this.chart.setOption(option);
           },
 
-          Doughnut: function(id) {
+          Doughnut: function(id, blogTag) {
             this.chart = echarts.init(document.getElementById(id));
             this.chart.clear();
+
+            blogTag = blogTag || [];
 
             const option = {
               tooltip: {
@@ -100,7 +75,7 @@ const install = function(Vue) {
               legend: {
                 orient: 'vertical',
                 x: 'left',
-                data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+                data: blogTag.map(i => i.title)
               },
               series: [{
                 name: '访问来源',
@@ -125,13 +100,9 @@ const install = function(Vue) {
                     show: false
                   }
                 },
-                data: [
-                  { value: 335, name: '直接访问' },
-                  { value: 310, name: '邮件营销' },
-                  { value: 234, name: '联盟广告' },
-                  { value: 135, name: '视频广告' },
-                  { value: 1548, name: '搜索引擎' }
-                ]
+                data: blogTag.map(i => {
+                  return { value: i.citationCount, name: i.title };
+                })
               }]
             };
 

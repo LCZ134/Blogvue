@@ -16,7 +16,6 @@ export default {
       state.userinfo = userinfo;
     },
     loginout(state) {
-      //console.log("退出", Cookies.get('token'));
       Cookies.remove('token');
       sessionStorage.removeItem("user");
     },

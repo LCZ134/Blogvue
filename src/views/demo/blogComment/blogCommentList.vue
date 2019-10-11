@@ -145,7 +145,6 @@ export default {
     },
     commentchange(status, id) {
       this.updateBlogComment({ id, isHidden: status ? 1 : 0 });
-      // this.getBlogCommentData(this.form);
     }
   },
   computed: {

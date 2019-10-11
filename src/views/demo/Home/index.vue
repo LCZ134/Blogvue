@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <el-row :gutter="12">
-      <el-col :span="6" v-for="item in 4" :key="item">
+      <!-- <el-col :span="6" v-for="item in 4" :key="item">
         <el-card shadow="always">
           <div class="alway">
             <div class="alway-title">
@@ -10,6 +10,62 @@
             </div>
             <div class="alway-icon">
               <i class="el-icon-edit"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>-->
+
+      <el-col :span="6">
+        <el-card shadow="always">
+          <div class="alway">
+            <div class="alway-title">
+              <p>历史</p>
+              <p>{{reportToday.viewWeek}}</p>
+            </div>
+            <div class="alway-icon">
+              <i class="el-icon-view"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="6">
+        <el-card shadow="always">
+          <div class="alway">
+            <div class="alway-title">
+              <p>文章</p>
+              <p>{{reportToday.publishWeek}}</p>
+            </div>
+            <div class="alway-icon">
+              <i class="el-icon-document-copy"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="6">
+        <el-card shadow="always">
+          <div class="alway">
+            <div class="alway-title">
+              <p>本周点赞</p>
+              <p>{{reportToday.thumbUpWeek}}</p>
+            </div>
+            <div class="alway-icon">
+              <i class="el-icon-discount"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+
+      <el-col :span="6">
+        <el-card shadow="always">
+          <div class="alway">
+            <div class="alway-title">
+              <p>本周评论数</p>
+              <p>{{reportToday.replyWeek}}</p>
+            </div>
+            <div class="alway-icon">
+              <i class="el-icon-s-comment"></i>
             </div>
           </div>
         </el-card>
@@ -71,18 +127,30 @@
   </div>
 </template> 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
+
 export default {
   data() {
     return {};
   },
   computed: {
-    ...mapState("admin/user", ["userinfo"])
+    ...mapState("admin/user", ["userinfo"]),
+    ...mapState("admin/report", ["reportToday"]),
+    ...mapState("admin/blogTag", ["blogTagList"])
+  },
+  created() {
+     this.getReportToday();
+     this.getBlogTagData().then(i=>{
+       console.log(...this.blogTagList)
+     })
   },
   mounted() {
     this.$chart.Customized("chart1");
-
-    this.$chart.Doughnut("doughnut");
+    this.$chart.Doughnut("doughnut", this.blogTagList);
+  },
+  methods: {
+    ...mapActions("admin/report", ["getReportToday"]),
+    ...mapActions("admin/blogTag", ["getBlogTagData"])
   }
 };
 </script>
@@ -124,7 +192,8 @@ export default {
   clear: both;
 }
 /* 图表 */
-#chart1,#doughnut{
+#chart1,
+#doughnut {
   width: 400px;
   height: 400px;
   margin: 0 auto;

@@ -105,19 +105,7 @@ export default {
         )
       })
     },
-    insertBlogPost({ dispatch, commit }, data) {
-      var action = {
-        data: data,
-        methods: 'post',
-        success: function(res) {
-          Message({ message: "添加文章成功", type: "success" });
-          commit('insertBlogPosts', res.extends);
-        }
-      }
-      dispatch('fetchBlogPost', action);
-    },
-
-    fetchBlogPost({ commit }, { data, methods, success }) {
+    fetchBlogPost({ commit }, { url, data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
 
@@ -130,7 +118,7 @@ export default {
       });
 
       api[methods](
-        "/blog",
+        url,
         formData,
         res => {
           if (res.statusCode != 0) {
@@ -143,9 +131,21 @@ export default {
         }
       )
     },
-    updateBlogPost({ dispatch, commit }, data) {
-
+    insertBlogPost({ dispatch, commit }, data) {
       var action = {
+        url: "/blog",
+        data: data,
+        methods: 'post',
+        success: function(res) {
+          Message({ message: "添加文章成功", type: "success" });
+          commit('insertBlogPosts', res.extends);
+        }
+      }
+      dispatch('fetchBlogPost', action);
+    },
+    updateBlogPost({ dispatch, commit }, data) {
+      var action = {
+        url: "/blog",
         data: data,
         methods: 'patch',
         success: function(res) {
@@ -155,6 +155,31 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
+
+    updatePostHidden({ dispatch, commit }, data) {
+      var action = {
+        url: "/blog/TriggerHidden",
+        data: data,
+        methods: 'patch',
+        success: function(res) {
+          Message({ message: "操作成功", type: "success" });
+        }
+      }
+      dispatch('fetchBlogPost', action);
+    },
+
+    updatePostShow({ dispatch, commit }, data) {
+      var action = {
+        url: "/blog/TriggerTop",
+        data: data,
+        methods: 'patch',
+        success: function(res) {
+          Message({ message: "操作成功", type: "success" });
+        }
+      }
+      dispatch('fetchBlogPost', action);
+    },
+
     OpenCular({ commit }, data) {
       commit('updataCulars', data);
     },

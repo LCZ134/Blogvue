@@ -148,7 +148,9 @@ export default {
       "getBlogData",
       "deleteBlogPost",
       "getBlogwhereData",
-      "OpenCular"
+      "OpenCular",
+      "updatePostHidden",
+      "updatePostShow"
     ]),
     ...mapActions("admin/blogTag", ["getBlogTagData"]),
     ...mapActions("admin/blogComment", ["getBlogCommentData"]),
@@ -186,10 +188,10 @@ export default {
       this.getBlogwhereData(this.form);
     },
     showChange(status, id) {
-      alert("处理中");
+      this.updatePostShow({ id, isTop: status ? 1 : 0 });
     },
     topChange(status, id) {
-      alert("处理中");
+      this.updatePostHidden({ id, isHidden: status ? 1 : 0 });
     }
   },
   computed: {

@@ -97,7 +97,6 @@ export default {
         if (res.statusCode != 0) {
           Message({ message: res.result, type: 'error' });
         } else {
-          // commit('toggleBlogComment', { id, isHidden });
           Message({ message: "操作成功", type: "success" });
         }
       })

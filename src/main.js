@@ -36,11 +36,13 @@ Vue.config.productionTip = false
 
 //Charts
 import myCharts from '@/comm/myCharts'
+import '@/comm/myCharts/theme.js';
 Vue.use(myCharts)
 
 //颜色选择器
 import vcolorpicker from 'vcolorpicker'
 Vue.use(vcolorpicker)
+
 
 /* eslint-disable no-new */
 new Vue({

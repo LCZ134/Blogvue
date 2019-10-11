@@ -1,5 +1,5 @@
 <template>
-  <section class="pretty-tabs">
+  <section class="pretty-tabs" @contextmenu.prevent="show">
     <el-tabs
       class="d2-multiple-page-control"
       :value="current"
@@ -31,7 +31,6 @@ export default {
   methods: {
     ...mapActions("admin/page", ["close"]),
     handleClick(tab, event) {
-      
       // 找到点击的页面在 tag 列表里是哪个
       const page = this.opened.find(page => page.fullPath === tab.name);
       const { name, params, query } = page;
@@ -45,6 +44,9 @@ export default {
           tagName
         });
       }
+    },
+    show() {
+      console.log("点击");
     }
   },
   created() {

@@ -113,7 +113,8 @@ export default {
         state.opened = state.opened.filter(i => i.name == 'home')
         resolve()
       })
-    }
+    },
+    //
   },
   mutations: {
     /**
