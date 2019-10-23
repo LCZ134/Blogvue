@@ -1,60 +1,52 @@
 import api from '@/api/index'
+import { Message, MessageBox } from 'element-ui';
 import { formatUrlParams } from '@/utils'
-import Cookies from 'js-cookie'
 
 export default {
   namespaced: true,
   state: {
-    userinfo: JSON.parse(sessionStorage.getItem("user")),
-    bloglist: [],
-    blogUserList: [],
-    totalCount: 0
+    roleList: [],
+    totalCount: 0,
   },
   mutations: {
-    login(state, userinfo) {
-      sessionStorage.setItem("user", JSON.stringify(userinfo));
-      state.userinfo = userinfo;
+    setRoleList(state, data) {
+      state.roleList = data;
     },
-    loginout(state) {
-      Cookies.remove('token');
-      sessionStorage.removeItem("user");
+    setRoleCount(state, count) {
+      state.totalCount = count;
     },
-    setUserlist(state, data) {
-      state.blogUserList = data;
-    },
-    setTotalCount(state, num) {
-      state.totalCount = num;
+    insertRole(state, data) {
+      state.roleList = [data, ...state.roleList];
     },
     updateRole(state, data) {
-      state.blogUserList = state.blogUserList.map(i => i.id === data.id ? data : i);
+      state.roleList = state.roleList.map(i => i.id === data.id ? data : i);
     }
   },
   actions: {
-    getBlogTagData({ commit }, data) {
+    getBlogCommentData({ commit }, data) {
       return new Promise((resolve, reject) => {
-        api.get(`/User/GetUserList${formatUrlParams(data)}`, null, res => {
-          commit('setUserlist', res.data);
-          commit('setTotalCount', res.totalCount);
+        api.get(`/role${formatUrlParams(data)}`, null, res => {
+          commit('setRoleList', res.data);
+          commit('setRoleCount', res.totalCount);
           resolve();
         })
       })
     },
-    updataUser({ commit }, data) {
+    insertRole({ dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
         var action = {
-          url: "/User",
+          url: '/role',
           data: data,
-          methods: 'patch',
+          methods: 'post',
           success: function(res) {
-            Message({ message: "修改用户成功", type: "success" });
-            commit('updateRole', data);
+            Message({ message: "角色添加成功", type: "success" });
           }
-        }
+        };
         dispatch('fetchBlogPost', action);
         resolve();
       })
     },
-    deleteUser({ commit }, userId) {
+    delectRole({ dispatch, commit }, roleid) {
       return new Promise((resolve, reject) => {
         MessageBox.confirm("此操作将删除, 是否继续?", "提示", {
           confirmButtonText: "确定",
@@ -62,7 +54,7 @@ export default {
           type: "warning"
         }).then(() => {
           api.delete(
-            `/user/${userId}`,
+            `/role/${roleid}`,
             null,
             res => {
               if (res.statusCode != 0) {
@@ -76,9 +68,26 @@ export default {
         })
       })
     },
+    updataRole({ dispatch, commit }, data) {
+      return new Promise((resolve, reject) => {
+        var action = {
+          url: "/role",
+          data: data,
+          methods: 'patch',
+          success: function(res) {
+            Message({ message: "修改文章成功", type: "success" });
+            commit('updateRole', data);
+          }
+        }
+        dispatch('fetchBlogPost', action);
+
+        resolve();
+      })
+    },
     fetchBlogPost({ commit }, { url, data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
+
       Object.keys(data).forEach(key => {
         formData.append(key, data[key]);
       });
@@ -94,5 +103,7 @@ export default {
         }
       )
     },
+
+
   }
 }

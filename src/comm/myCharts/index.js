@@ -9,9 +9,18 @@ const install = function(Vue) {
     $chart: {
       get() {
         return {
-          Customized: function(id) {
+          tableChart: function(id, blogRole) {
             this.chart = echarts.init(document.getElementById(id), 'purple-passion');
             this.chart.clear();
+
+            blogRole = blogRole || [];
+
+            var ruselt = blogRole.map(i => {
+              return {
+                value: i.userCount,
+                name: i.roleName
+              }
+            });
 
             const option = {
               backgroundColor: '#fff',
@@ -42,13 +51,7 @@ const install = function(Vue) {
                 type: 'pie',
                 radius: '55%',
                 center: ['50%', '50%'],
-                data: [
-                  { value: 335, name: '直接访问' },
-                  { value: 310, name: '邮件营销' },
-                  { value: 274, name: '联盟广告' },
-                  { value: 235, name: '视频广告' },
-                  { value: 400, name: '搜索引擎' }
-                ].sort(function(a, b) { return a.value - b.value; }),
+                data: ruselt.sort(function(a, b) { return a.value - b.value; }),
                 roseType: 'radius',
                 animationType: 'scale',
                 animationEasing: 'elasticOut',
@@ -57,17 +60,14 @@ const install = function(Vue) {
                 }
               }]
             };
-
             this.chart.setOption(option);
           },
-
-          Doughnut: function(id, blogTag) {
-            this.chart = echarts.init(document.getElementById(id));
+          postChart: function(id, blogTag) {
+            this.chart = echarts.init(document.getElementById(id), 'purple-passion');
             this.chart.clear();
-
             blogTag = blogTag || [];
-
             const option = {
+              backgroundColor: '#fff',
               tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -105,10 +105,39 @@ const install = function(Vue) {
                 })
               }]
             };
-
-
             this.chart.setOption(option);
           },
+          monthChart: function(id, data) {
+            this.chart = echarts.init(document.getElementById(id), 'purple-passion');
+            this.chart.clear();
+            data = data.reverse() || [];
+            var title = ['product', '浏览', '发布文章', '评论', '点赞'];
+            var contedata = data.map(i => {
+              return Object.keys(i).map(s => {
+                return s != "month" ? i[s] : `${i.month}月`;
+              });
+            })
+
+            var option = {
+              legend: {},
+              tooltip: {},
+              dataset: {
+                source: [
+                  title,
+                  ...contedata
+                ]
+              },
+              xAxis: { type: 'category' },
+              yAxis: {},
+              series: [
+                { type: 'bar' },
+                { type: 'bar' },
+                { type: 'bar' },
+                { type: 'bar' }
+              ]
+            };
+            this.chart.setOption(option);
+          }
         }
       }
     }

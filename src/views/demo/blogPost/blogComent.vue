@@ -27,8 +27,6 @@ export default {
     updateBlogcomment() {
       var date = this.bloglist.find(i => i.id === this.selectComment.id);
 
-      console.log(date);
-
       // this.updateBlogPost({
       //   id: this.selectComment.id,
       //   mdContent: this.selectComment.blogContent

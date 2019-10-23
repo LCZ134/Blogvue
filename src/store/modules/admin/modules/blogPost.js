@@ -64,11 +64,10 @@ export default {
     },
     getBlogwhereData({ commit }, data) {
       return new Promise((resolve, reject) => {
-        var result = {};
-        Object.keys(data).forEach(key => {
-          result[key] = key != 'pageIndex' ? data[key] : data[key] - 1;
-        });
-        api.get(`/blog${formatUrlParams(result)}`, null, res => {
+
+        console.log("数据", data);
+
+        api.get(`/blog${formatUrlParams(data)}`, null, res => {
           commit('getBlogPosts', res.data);
           commit('getTotalCount', res.totalCount);
           resolve();
@@ -93,13 +92,11 @@ export default {
           "/blog/" + blogPostId,
           null,
           res => {
-            console.log(res);
             if (res.statusCode != 0) {
               Message({ message: res.result, type: 'error' });
             } else {
               commit('deleteBlogPost', blogPostId);
               Message({ message: "删除成功", type: "success" });
-
             }
           }
         )

@@ -6,9 +6,21 @@
       </el-form-item>
 
       <el-form-item label="时间">
-        <el-date-picker type="date" placeholder="开始日期" v-model="form.dateFrom"></el-date-picker>
+        <el-date-picker
+          type="date"
+          placeholder="开始日期"
+          format="yyyy 年 MM 月 dd 日"
+          value-format="yyyy-MM-dd"
+          v-model="form.dateFrom"
+        ></el-date-picker>
         <span>-</span>
-        <el-date-picker type="date" placeholder="结束日期" v-model="form.dateTo"></el-date-picker>
+        <el-date-picker
+          type="date"
+          placeholder="结束日期"
+          format="yyyy 年 MM 月 dd 日"
+          value-format="yyyy-MM-dd"
+          v-model="form.dateTo"
+        ></el-date-picker>
       </el-form-item>
 
       <el-form-item>
@@ -29,9 +41,6 @@
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
               <div class="comment-pop">
-                <p>
-                  <!-- <img :src="scope.row.user.avatarUrl" /> -->
-                </p>
                 <p>性别: {{ scope.row.user.gender | genderStatus}}</p>
               </div>
               <div slot="reference" class="name-wrapper">
@@ -59,7 +68,6 @@
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="showDialog(scope.row.id)" size="mini">子评论</el-button>
-
             <el-button @click="deleteComment(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
@@ -106,7 +114,7 @@ export default {
         dateTo: "",
         showHidden: true,
         pageIndex: 1, //初始页
-        pageSize: 5 // 每页的数据,
+        pageSize: 10 // 每页的数据,
       },
       dialogTableVisible: false,
       parentId: "" //父评论
@@ -163,6 +171,9 @@ export default {
     },
     genderStatus(obj) {
       return obj == 0 ? "男" : "女";
+    },
+    IsContent(obj) {
+      return obj != null || obj.length > 0 ? obj : "不能为空";
     }
   }
 };

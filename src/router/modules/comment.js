@@ -1,8 +1,5 @@
 import Index from '@/components/Index'
-
-
 import blogComment from '@/views/demo/blogComment/blogCommentList'
-
 import leaveword from '@/views/demo/blogComment/leaveword'
 
 export default {

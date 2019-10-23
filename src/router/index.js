@@ -16,13 +16,12 @@ const router = new VueRouter({
 //将所有未登录会话重定向到 /login
 router.beforeEach((to, from, next) => {
 
-  if (to.path === '/login') {
+  if (to.path === '/login' || to.path === '/logout') {
     Cookies.remove('token');
     sessionStorage.removeItem('user');
   }
 
   var user = sessionStorage.getItem('user');
-
   if (!user && to.path !== '/login') {
     next({
       path: '/login'

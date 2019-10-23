@@ -1,14 +1,19 @@
 import api from '@/api/index'
 import { Message } from 'element-ui';
+import { promised } from 'q';
 
 export default {
   namespaced: true,
   state: {
-    reportToday: {}
+    reportToday: {},
+    reportMouth: []
   },
   mutations: {
     setreport(state, data) {
       state.reportToday = data;
+    },
+    setReportMouth(state, data) {
+      state.reportMouth = data;
     }
   },
   actions: {
@@ -16,6 +21,14 @@ export default {
       return new Promise((resolve, reject) => {
         api.get("/Report", null, res => {
           commit("setreport", res);
+        })
+        resolve();
+      })
+    },
+    getReportMouth({ commit }) {
+      return new Promise((resolve, reject) => {
+        api.get("/Report/getmonth", null, res => {
+          commit("setReportMouth", res);
         })
         resolve();
       })

@@ -1,7 +1,15 @@
 export const formatUrlParams = (obj) => {
-  var parmsStr = Object.keys(obj)
-    .filter(key => filterEmply(obj[key]))
-    .map(key => `${key}=${obj[key]}`)
+
+  obj = obj || {};
+  var result = {};
+
+  Object.keys(obj).forEach(key => {
+    result[key] = key != 'pageIndex' ? obj[key] : obj[key] - 1;
+  });
+
+  var parmsStr = Object.keys(result)
+    .filter(key => filterEmply(result[key]))
+    .map(key => `${key}=${result[key]}`)
     .join('&');
   return parmsStr ? `?${parmsStr}` : '';
 }

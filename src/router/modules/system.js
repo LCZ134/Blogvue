@@ -1,6 +1,6 @@
 import Index from '@/components/Index'
 
-import Seting from '@/views/system/seting'
+import Setting from '@/views/system/seting'
 import blogposteditor from '@/views/demo/blogpost/blogposteditor'
 
 export default {
@@ -13,9 +13,9 @@ export default {
   },
   IsHidden: true,
   children: [{
-    path: '/blog',
+    path: '/setting',
     name: '设置',
-    component: Seting,
+    component: Setting,
     meta: {
       title: '设置',
       auth: true,
@@ -23,9 +23,8 @@ export default {
     },
     IsHidden: true,
   }, {
-    path: '/systemout',
+    path: '/logout',
     name: '退出',
-    component: blogposteditor,
     meta: {
       title: '退出',
       auth: true,

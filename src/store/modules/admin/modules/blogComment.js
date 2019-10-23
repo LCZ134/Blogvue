@@ -45,11 +45,7 @@ export default {
     //获取所有评论
     getBlogCommentData({ commit }, data) {
       return new Promise((resolve, reject) => {
-        var result = {};
-        Object.keys(data).forEach(key => {
-          result[key] = key != 'pageIndex' ? data[key] : data[key] - 1;
-        });
-        api.get(`/Comment${formatUrlParams(result)}`, null, res => {
+        api.get(`/Comment${formatUrlParams(data)}`, null, res => {
           commit('setblogComment', res.data);
           commit('setTotalCount', res.totalCount);
           resolve();
@@ -86,13 +82,10 @@ export default {
         )
       })
     },
-
     updateBlogComment({ commit, state }, { id, isHidden }) {
-
       const formData = new FormData();
       formData.append("id", id);
       formData.append("isHidden", isHidden);
-
       api.patch(`/comment`, formData, res => {
         if (res.statusCode != 0) {
           Message({ message: res.result, type: 'error' });

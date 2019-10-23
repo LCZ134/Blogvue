@@ -42,8 +42,6 @@ export default {
             return same
           })
 
-          //console.log(fullPath, pageOpend);
-
           if (pageOpend) {
             // 页面以前打开过
             dispatch('openedUpdate', {
@@ -74,6 +72,7 @@ export default {
     },
     add({ state }, { tag, params, query, fullPath }) {
       return new Promise(async resolve => {
+
         // 设置新的 tag 在新打开一个以前没打开过的页面时使用
         let newTag = tag
         newTag.params = params || newTag.params
@@ -91,18 +90,14 @@ export default {
         if (tagName != "/home") {
           state.opened = state.opened.filter(i => i.fullPath !== tagName)
         }
-
         if (state.current === tagName) {
-
           const { name = '', fullPath, params = {}, query = {} } = state.opened[state.opened.length - 1]
-
           state.current = fullPath
           let routerObj = {
             name,
             params,
             query
           }
-
           router.push(routerObj)
         }
         resolve()
@@ -110,11 +105,53 @@ export default {
     },
     closeAll({ state }) {
       return new Promise((resolve, reject) => {
-        state.opened = state.opened.filter(i => i.name == 'home')
+        state.opened = state.opened.filter(i => i.name == 'home');
+        if (router.app.$route.name !== 'home') {
+          router.push({
+            name: 'home'
+          })
+        }
         resolve()
       })
     },
-    //
+    //关闭其他
+    closeOther({ state, commit, dispatch }, fullPath) {
+      return new Promise(async resolve => {
+        //console.log('不关闭页面', fullPath);
+        state.opened = state.opened.filter(i => {
+          if (i.fullPath == '/home' || i.fullPath == fullPath) {
+            return i;
+          }
+        })
+        resolve()
+      })
+    },
+
+    closeLeft({ state, commit, dispatch }, { pageSelect } = {}) {
+      return new Promise(async resolve => {
+
+        const pageAim = pageSelect || state.current
+        let currentIndex = 0
+        state.opened.forEach((page, index) => {
+          if (page.fullPath === pageAim) {
+            currentIndex = index
+          }
+        })
+        if (currentIndex > 0) {
+          // 删除打开的页面 并在缓存设置中删除
+          state.opened.splice(1, currentIndex - 1).forEach(({ name }) => commit('keepAliveRemove', name))
+        }
+        state.current = pageAim
+        if (router.app.$route.fullPath !== pageAim) {
+          router.push(pageAim)
+        }
+        // 持久化
+        await dispatch('opend2db')
+          // end
+        resolve()
+      })
+    },
+
   },
   mutations: {
     /**

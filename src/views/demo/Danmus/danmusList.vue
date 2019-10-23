@@ -27,13 +27,22 @@
 
         <el-table-column label="评论">
           <template slot-scope="scope">
-            <p v-html="scope.row.content"></p>
+            <p
+              :style="{color:scope.row.color,fontSize:scope.row.fontesize+'px'}"
+              v-html="scope.row.content"
+            ></p>
           </template>
         </el-table-column>
 
         <el-table-column label="颜色">
           <template slot-scope="scope">
             <p v-html="scope.row.color"></p>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="类型">
+          <template slot-scope="scope">
+            <p v-html="scope.row.type"></p>
           </template>
         </el-table-column>
 
@@ -45,7 +54,7 @@
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button :data-s="scope.row.id" size="mini" type="danger">删除</el-button>
+            <el-button @click="deleteDanmus(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -77,6 +86,10 @@
           <el-input-number v-model="page.fontesize" controls-position="right" :min="12"></el-input-number>
         </el-form-item>
 
+        <el-form-item label="弹幕类型">
+          <el-input v-model="page.type"></el-input>
+        </el-form-item>
+
         <el-form-item label="弹幕发言">
           <el-input type="textarea" v-model="page.content"></el-input>
         </el-form-item>
@@ -99,13 +112,14 @@ export default {
         UserId: "",
         content: "",
         pageIndex: 1, //初始页
-        pageSize: 5 // 每页的数据,
+        pageSize: 10 // 每页的数据,
       },
       dialogVisible: false,
       page: {
         content: "",
         color: "#ff0000",
-        fontesize: 20
+        fontesize: 20,
+        type: "scroll"
       },
       //数据验证
       rules: {
@@ -119,7 +133,7 @@ export default {
     ...mapState("admin/danmu", ["totalCount", "danmsList"])
   },
   methods: {
-    ...mapActions("admin/danmu", ["gitdanmlist", "insertDanmu"]),
+    ...mapActions("admin/danmu", ["gitdanmlist", "insertDanmu", "deleteDanmu"]),
     handleSizeChange: function(size) {
       this.form.pageSize = size; //每页显示多少条数据
       this.gitdanmlist(this.form);
@@ -132,11 +146,17 @@ export default {
       this.gitdanmlist(this.form);
     },
     submitForm() {
-      this.insertDanmu(this.page);
-      //关闭弹框
-      this.dialogVisible = false;
-      //刷新数据
-      this.gitdanmlist(this.form);
+      var that = this;
+      this.insertDanmu(this.page).then(function() {
+        that.dialogVisible = false;
+        that.gitdanmlist(that.form);
+      });
+    },
+    deleteDanmus(id) {
+      var that = this;
+      this.deleteDanmu(id).then(function() {
+        that.gitdanmlist(that.form);
+      });
     }
   },
   created() {

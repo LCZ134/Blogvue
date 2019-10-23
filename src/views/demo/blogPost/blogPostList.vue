@@ -8,6 +8,7 @@
           </el-form-item>
           <el-form-item label="标签">
             <el-select v-model="form.tags" placeholder="选择标签" @change="selectTag()">
+              <el-option label="--请选择--" value></el-option>
               <el-option
                 v-for="blogTag in blogTagList"
                 :key="blogTag.id"
@@ -16,10 +17,23 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="活动时间">
-            <el-date-picker type="date" placeholder="开始日期" v-model="form.dateFrom"></el-date-picker>
+          
+          <el-form-item label="时间">
+            <el-date-picker
+              type="date"
+              placeholder="开始日期"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd"
+              v-model="form.dateFrom"
+            ></el-date-picker>
             <span>-</span>
-            <el-date-picker type="date" placeholder="结束日期" v-model="form.dateTo"></el-date-picker>
+            <el-date-picker
+              type="date"
+              placeholder="结束日期"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd"
+              v-model="form.dateTo"
+            ></el-date-picker>
           </el-form-item>
 
           <el-form-item>
@@ -70,7 +84,6 @@
 
             <el-table-column label="是否置顶">
               <template slot-scope="scope">
-                <!-- <p>{{scope.row.isTop | fromatStatus}}</p>  -->
                 <el-switch
                   v-model="scope.row.isTop"
                   @change="topChange(scope.row.isTop,scope.row.id)"
@@ -87,7 +100,7 @@
             </el-table-column>
           </el-table>
         </div>
-
+        <!-- 内容 -->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -133,7 +146,7 @@ export default {
         dateFrom: "",
         dateTo: "",
         pageIndex: 1, //初始页
-        pageSize: 5 //    每页的数据
+        pageSize: 10 //    每页的数据
       }
     };
   },

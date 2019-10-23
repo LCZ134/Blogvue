@@ -39,16 +39,16 @@
     ></el-pagination>
 
     <!-- 查看弹出框 -->
-    <el-dialog :title="dialogName" :visible.sync="dialogVisible">
+    <el-dialog :title="dialogName" :visible.sync="dialogVisible" center>
       <el-form>
-        <el-form-item label="编号id" v-show="ruleForm.id.length>0">
+        <el-form-item label="编号id" v-show="false">
           <el-input autocomplete="off" v-model="ruleForm.id" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="标签名称">
           <el-input autocomplete="off" v-model="ruleForm.title"></el-input>
         </el-form-item>
 
-        <el-form-item label="文章数量" v-show="ruleForm.id.length>0">
+        <el-form-item label="文章数量" v-show="false">
           <el-input autocomplete="off" :disabled="true" v-model="ruleForm.citationCount"></el-input>
         </el-form-item>
       </el-form>
@@ -79,7 +79,7 @@ export default {
       paging: {
         title: "", //模糊查询
         pageIndex: 1, //初始页
-        pageSize: 5 //    每页的数据
+        pageSize: 10 //    每页的数据
       },
       dialogVisible: false,
       dialogName: ""
@@ -94,20 +94,21 @@ export default {
       "updateBlogTag"
     ]),
     update() {
+      var that = this;
       this.dialogVisible = false;
-
       if (this.ruleForm.id.length > 0) {
         this.updateBlogTag({
           title: this.ruleForm.title,
           id: this.ruleForm.id
         }).then(s => {
-          this.getBlogTagwhereData(this.paging);
+          that.getBlogTagwhereData(that.paging);
         });
       } else {
-        this.insertBlogTag({
-          title: this.ruleForm.title
+        this.insertBlogTag({ title: this.ruleForm.title }).then(function() {
+          that.getBlogTagwhereData(that.paging);
         });
       }
+      this.getBlogTagwhereData(this.paging);
     },
     addBlogTag() {
       //查看
@@ -138,8 +139,8 @@ export default {
     delteBlogTags(id) {
       this.delteBlogTag({ blogtagtId: id, data: this.paging });
     },
-    getBlogTag(){
-       this.getBlogTagwhereData(this.paging);
+    getBlogTag() {
+      this.getBlogTagwhereData(this.paging);
     }
   },
   computed: {

@@ -30,11 +30,7 @@ export default {
     },
     getBlogTagwhereData({ commit }, data) {
       return new Promise((resolve, reject) => {
-        var result = {};
-        Object.keys(data).forEach(key => {
-          result[key] = key != 'pageIndex' ? data[key] : data[key] - 1;
-        });
-        api.get(`/tag/getALL${formatUrlParams(result)}`, null, res => {
+        api.get(`/tag/getALL${formatUrlParams(data)}`, null, res => {
           commit('setBlogTags', res.data);
           commit('setTotalCount', res.totalCount);
           resolve();

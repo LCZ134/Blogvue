@@ -1,5 +1,9 @@
 <template>
-  <div class="login-container">
+  <div class="login-container lowin">
+    <div class="lowin-brand">
+      <img src="@/assets/kodinger.jpg" />
+    </div>
+
     <el-form
       :model="ruleForm"
       :rules="rules2"
@@ -9,7 +13,10 @@
       label-width="0px"
       class="demo-ruleForm login-page"
     >
-      <h3 class="title">系统登录</h3>
+      <el-form-item class="lowin-box">
+        <h3 class="title">Sign in to continue</h3>
+      </el-form-item>
+
       <el-form-item prop="email">
         <el-input type="text" v-model="ruleForm.email" auto-complete="off" placeholder="用户名"></el-input>
       </el-form-item>
@@ -125,15 +132,55 @@ export default {
 .login-page {
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  margin: 180px auto;
-  width: 350px;
+  margin: 0px auto;
+  width: 400px;
   padding: 35px 35px 15px;
   background: #fff;
   border: 1px solid #eaeaea;
   box-shadow: 0 0 25px #cac6c6;
 }
+
 label.el-checkbox.rememberme {
   margin: 0px 0px 15px;
   text-align: left;
+}
+
+.lowin {
+  --color-primary: #44a0b3;
+  --color-grey: rgba(68, 160, 179, 0.06);
+  --color-dark: rgba(68, 160, 179, 0.5);
+  --color-semidark: rgba(68, 160, 179, 0.5);
+  margin: 60px 0 0 0;
+  font-size: 14px;
+}
+
+.lowin * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.lowin-box h3 {
+  color: var(--color-semidark);
+  font-weight: 700;
+  margin: 20px;
+  text-align: center;
+}
+
+.lowin-brand {
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto -50px auto;
+  border-radius: 50%;
+  -webkit-box-shadow: 0 4px 40px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.07);
+  padding: 10px;
+  background-color: #fff;
+  z-index: 1;
+  position: relative;
+}
+.lowin-brand img {
+  width: 100%;
+  height: 100%;
 }
 </style>

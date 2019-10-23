@@ -43,7 +43,6 @@ Vue.use(myCharts)
 import vcolorpicker from 'vcolorpicker'
 Vue.use(vcolorpicker)
 
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
