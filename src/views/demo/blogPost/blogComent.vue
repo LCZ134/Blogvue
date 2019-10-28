@@ -14,10 +14,11 @@
 
 <script >
 import { mapState, mapActions } from "vuex";
+import { mavonEditor } from "mavon-editor";
 
 export default {
   created() {
-    console.log(this.selectComment);
+    console.log("数据", this.selectComment);
   },
   computed: {
     ...mapState("admin/blogPost", ["selectComment", "bloglist"])
@@ -26,7 +27,6 @@ export default {
     ...mapActions("admin/blogPost", ["closeCular", "updateBlogPost"]),
     updateBlogcomment() {
       var date = this.bloglist.find(i => i.id === this.selectComment.id);
-
       // this.updateBlogPost({
       //   id: this.selectComment.id,
       //   mdContent: this.selectComment.blogContent
@@ -66,6 +66,9 @@ export default {
         preview: true // 预览
       }
     };
+  },
+  components: {
+    mavonEditor
   }
 };
 </script>

@@ -71,7 +71,13 @@
 
         <el-form-item label="内容">
           <div class="mavonEditor">
-            <mavon-editor v-model="form.mdContent" :toolbars="markdownOption" @change="textSave" />
+            <mavon-editor
+              ref="md"
+              v-model="form.mdContent"
+              :toolbars="markdownOption"
+              @imgAdd="$imgAdd"
+              @change="textSave"
+            />
           </div>
         </el-form-item>
 
@@ -85,7 +91,8 @@
 </template>
 
 <script >
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
+import { mavonEditor } from "mavon-editor";
 
 export default {
   data() {
@@ -105,7 +112,13 @@ export default {
       rules: {
         title: [{ required: true, message: "输入错误", trigger: "blur" }],
         describe: [
-          { required: true, message: "描述不能为空", trigger: "blur" }
+          { required: true, message: "描述不能为空", trigger: "blur" },
+          {
+            min: 3,
+            max: 200,
+            message: "长度在 3 到 200 个字符",
+            trigger: "blur"
+          }
         ],
         tags: [
           {
@@ -160,6 +173,13 @@ export default {
       isfile: true
     };
   },
+  computed: {
+    ...mapState("admin/blogTag", ["blogTagList"]),
+    ...mapState("admin/blogPost", ["blogPost"])
+  },
+  components: {
+    mavonEditor
+  },
   methods: {
     ...mapActions("admin/blogTag", ["getBlogTagData"]),
     ...mapActions("admin/blogPost", [
@@ -171,11 +191,9 @@ export default {
     loadPageData() {
       this.blogPostId = this.$route.params.id;
 
-      if (this.$route.params.id != null && this.blogPostId != ":id") {
+      if (this.blogPostId != null && this.blogPostId != ":id") {
         this.getBlogPost(this.blogPostId).then(() => {
-          
           Object.keys(this.form).forEach(key => {
-            
             var obj = this.blogPost[this.blogPostId][key];
             if (obj == null || obj.length <= 0) return false;
             switch (key) {
@@ -204,8 +222,6 @@ export default {
           });
         });
       }
-      console.log(this.form);
-
       this.getBlogTagData().then(() => {
         this.blogTags = this.blogTagList;
       });
@@ -213,8 +229,9 @@ export default {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          if (this.isfile) {
-            this.submitFile().then(() => {
+          if (this.isfile && this.fileList[0].raw) {
+            this.submitFile(this.fileList[0].raw).then(url => {
+              this.form.bannerUrl = `${url}`;
               this.submitData();
             });
           } else {
@@ -254,20 +271,13 @@ export default {
       this.fileList = fileList;
       this.dialogImageUrl = file.url;
     },
-    submitFile() {
-      if (this.oldImageUrl === this.dialogImageUrl.replace("..", ".")) {
-        return new Promise((resolve, reject) => {
-          resolve();
-        });
-      }
-
+    submitFile(file) {
       const formData = new FormData();
-      formData.append("file", this.fileList[0].raw);
+      formData.append("file", file);
       return new Promise((resolve, reject) => {
         this.$api.post("/file", formData, res => {
           if (res[0].statusCode == 0) {
-            this.form.bannerUrl = `${res[0].extends.path}`;
-            resolve();
+            resolve(res[0].extends.path);
           } else {
             this.$message.error(res.result);
             reject(res.result);
@@ -280,29 +290,26 @@ export default {
         this.updateBlogPost(this.form);
       } else {
         this.insertBlogPost(this.form);
-        this.resetForm("form");
+        // this.resetForm("form");
       }
-      this.close({ tagName: this.$route.path }); //关闭
+      // this.close({ tagName: this.$route.path }); //关闭
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    // 绑定@imgAdd event
+    $imgAdd(pos, $file) {
+      // 第一步.将图片上传到服务器.
+      this.submitFile($file).then(url => {
+        this.$refs.md.$img2Url(pos, url);
+      });
     }
   },
-  computed: {
-    ...mapState("admin/blogTag", ["blogTagList"]),
-    ...mapState("admin/blogPost", ["blogPost"])
-  },
   beforeRouteUpdate(to, from, next) {
-    console.log("route updated", to);
     this.loadPageData();
   },
   mounted() {
     this.loadPageData();
-  },
-  watch: {
-    $router(to, from) {
-      console.log("路由发生了变化", this.$route.params);
-    }
   }
 };
 </script>

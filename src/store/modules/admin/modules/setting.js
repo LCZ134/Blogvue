@@ -5,48 +5,45 @@ import { formatUrlParams } from '@/utils'
 export default {
   namespaced: true,
   state: {
-    roleList: [],
-    totalCount: 0,
+    settingList: [],
+    totalCount: 0
   },
   mutations: {
-    setRoleList(state, data) {
-      state.roleList = data;
+    setSettingList(state, data) {
+      state.settingList = data;
     },
-    setRoleCount(state, count) {
-      state.totalCount = count;
+    setTotalCount(state, num) {
+      state.totalCount = num;
     },
-    insertRole(state, data) {
-      state.roleList = [data, ...state.roleList];
+    updateSettingList(state, data) {
+      state.setSettingList = state.setSettingList.map(i => i.id == data.id ? data : i);
     },
-    updateRole(state, data) {
-      state.roleList = state.roleList.map(i => i.id === data.id ? data : i);
-    }
   },
   actions: {
-    getBlogCommentData({ commit }, data) {
+    getSettingList({ commit }, data) {
       return new Promise((resolve, reject) => {
-        api.get(`/role${formatUrlParams(data)}`, null, res => {
-          commit('setRoleList', res.data);
-          commit('setRoleCount', res.totalCount);
+        api.get(`/setting/getall${formatUrlParams(data)}`, null, res => {
+          commit('setSettingList', res.data);
+          commit('setTotalCount', res.totalCount);
           resolve();
         })
       })
     },
-    insertRole({ dispatch, commit }, data) {
+    insertSetting({ dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
         var action = {
-          url: '/role',
+          url: '/setting',
           data: data,
           methods: 'post',
           success: function(res) {
-            Message({ message: "角色添加成功", type: "success" });
+            Message({ message: "设置添加成功", type: "success" });
           }
         };
-        dispatch('fetchBlogPost', action);
+        dispatch('fetchData', action);
         resolve();
       })
     },
-    delectRole({ dispatch, commit }, roleid) {
+    deleteSetting({ dispatch, commit }, settingid) {
       return new Promise((resolve, reject) => {
         MessageBox.confirm("此操作将删除, 是否继续?", "提示", {
           confirmButtonText: "确定",
@@ -54,7 +51,7 @@ export default {
           type: "warning"
         }).then(() => {
           api.delete(
-            `/role/${roleid}`,
+            `/setting?id=${settingid}`,
             null,
             res => {
               if (res.statusCode != 0) {
@@ -68,28 +65,27 @@ export default {
         })
       })
     },
-    updataRole({ dispatch, commit }, data) {
+    updataSetting({ dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
         var action = {
-          url: "/role",
+          url: "/setting",
           data: data,
           methods: 'patch',
           success: function(res) {
-            Message({ message: "修改文章成功", type: "success" });
-            commit('updateRole', data);
+            Message({ message: "设置修改成功", type: "success" });
           }
         }
-        dispatch('fetchBlogPost', action);
-
+        dispatch('fetchData', action);
         resolve();
       })
     },
-    fetchBlogPost({ commit }, { url, data, methods, success }) {
+    fetchData({ commit }, { url, data, methods, success }) {
       if (!data) return;
       const formData = new FormData();
-
       Object.keys(data).forEach(key => {
-        formData.append(key, data[key]);
+        if (data[key] != null && data[key].length > 0) {
+          formData.append(key, data[key]);
+        }
       });
       api[methods](
         url,

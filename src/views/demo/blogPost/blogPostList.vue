@@ -134,6 +134,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import BlogComent from "./blogComent";
+import { mavonEditor } from "mavon-editor";
 
 export default {
   data() {

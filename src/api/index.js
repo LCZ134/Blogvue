@@ -41,8 +41,13 @@ function apiAxios(method, url, params, success, failure) {
     .catch(function(err) {
       let res = err.response
       if (err) {
-        // if (typeof failure === 'undefined') Message({ message: `请求出错`, type: 'error' });
+        // Message({ message: `请求出错${ res.status}`, type: 'error' });
+
+        // if (failure == null || typeof failure === 'undefined' || typeof failure !== 'function') {
+        //   Message({ message: `请求出错`, type: 'error' });
+        // } else {
         if (typeof failure === 'function') failure(res);
+        // }
       }
     })
 }

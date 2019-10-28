@@ -61,6 +61,11 @@ export default {
         })
       })
     },
+    getBlogChild({ commit }, parenId) {
+      api.get(`/Comment?ParentId=${parenId}`, null, res => {
+        return res.data;
+      })
+    },
     //删除评论
     deleteBlogComment({ dispatch, commit }, blogData) {
       MessageBox.confirm("此操作将删除, 是否继续?", "提示", {

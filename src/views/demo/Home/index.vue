@@ -90,7 +90,17 @@
               <span>登录日志</span>
               <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
             </div>
-            <div v-for="o in 4" :key="o" class="text item">{{'列表内容 ' + o }}</div>
+            <el-collapse class="infinite-list"  v-infinite-scroll="load" accordion>
+              <el-collapse-item
+                v-for="item in eventList"
+                :key="item.id"
+                :title="item.user.nickName"
+              >
+                <div>登录时间：{{item.createOn}}</div>
+                <div>登录IP：{{item.ipAddress}}</div>
+                <div>登录环境：{{item.referrerUrl}}</div>
+              </el-collapse-item>
+            </el-collapse>
           </el-card>
         </div>
       </el-col>
@@ -122,14 +132,16 @@ export default {
     ...mapState("admin/user", ["userinfo"]),
     ...mapState("admin/report", ["reportToday", "reportMouth"]),
     ...mapState("admin/blogTag", ["blogTagList"]),
-    ...mapState("admin/role", ["roleList"])
+    ...mapState("admin/role", ["roleList"]),
+    ...mapState("admin/event", ["eventList"])
   },
   created() {
     this.getReportToday();
-    var that = this;
+    this.getEventList({PageSize:8});
 
+    var that = this;
     this.getBlogCommentData().then(function() {
-       that.$chart.tableChart("chart1",that.roleList);
+      that.$chart.tableChart("chart1", that.roleList);
     });
 
     this.getBlogTagData().then(function() {
@@ -143,7 +155,11 @@ export default {
   methods: {
     ...mapActions("admin/report", ["getReportToday", "getReportMouth"]),
     ...mapActions("admin/blogTag", ["getBlogTagData"]),
-    ...mapActions("admin/role", ["getBlogCommentData"])
+    ...mapActions("admin/role", ["getBlogCommentData"]),
+    ...mapActions("admin/event", ["getEventList"]),
+    load() {
+      this.count += 2;
+    }
   }
 };
 </script>
@@ -167,6 +183,8 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+  max-height: 502px;
+  overflow: hidden;
 }
 .text {
   font-size: 14px;
@@ -208,7 +226,7 @@ export default {
   margin: 2px;
   font-size: 20px;
   font-weight: bold;
-  text-shadow: 1px 1px 2px #716969;
+  /* text-shadow: 1px 1px 2px #716969; */
 }
 .alway .alway-icon {
   text-align: right;

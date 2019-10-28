@@ -16,7 +16,9 @@
             <el-breadcrumb-item v-for="item in levelList" :key="item.path">{{item.name}}</el-breadcrumb-item>
           </el-breadcrumb>
           <!-- 右侧显示区域 -->
-          <Main></Main>
+          <keep-alive>
+            <Main></Main>
+          </keep-alive>
         </el-main>
       </el-container>
     </el-container>
@@ -26,7 +28,7 @@
 <script>
 import Main from "./main";
 import saide from "./saide";
-import TapHeader from './header';
+import TapHeader from "./header";
 
 import PrettyTabs from "@/components/pretty-tabs";
 
@@ -44,13 +46,13 @@ export default {
       levelList: null
     };
   },
-  computed: {    
+  computed: {
     ...mapState("admin/user", ["userinfo"])
   },
   methods: {
     ...mapMutations("admin/user", ["loginout"]),
-    ...mapActions("admin/page", ["closeAll"]),
-  },
+    ...mapActions("admin/page", ["closeAll"])
+  }
 };
 </script>
 

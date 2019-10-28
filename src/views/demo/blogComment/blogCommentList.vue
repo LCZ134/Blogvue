@@ -88,13 +88,7 @@
     <!-- 查看弹出框 -->
     <el-dialog title="评论" :visible.sync="dialogTableVisible">
       <el-collapse accordion>
-        <el-collapse-item
-          v-for="item in blogCommentChild"
-          :key="item.id"
-          :title="item.user.nickName "
-        >
-          <div v-html="item.content"></div>
-        </el-collapse-item>
+        <comments :comtId="parentId"></comments>
       </el-collapse>
     </el-dialog>
   </div>
@@ -102,6 +96,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+
+import comments from "@/components/comment";
 
 export default {
   data() {
@@ -119,6 +115,9 @@ export default {
       dialogTableVisible: false,
       parentId: "" //父评论
     };
+  },
+  components: {
+    comments
   },
   methods: {
     ...mapActions("admin/blogComment", [
@@ -143,6 +142,8 @@ export default {
       this.getBlogChildData(CommentId).then(s => {
         if (this.blogCommentChild.length > 0) {
           this.dialogTableVisible = true;
+
+          this.parentId = CommentId;
         } else {
           this.$message({ message: "没有子评论" });
         }

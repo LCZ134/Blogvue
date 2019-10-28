@@ -15,7 +15,7 @@ const install = function(Vue) {
 
             blogRole = blogRole || [];
 
-            var ruselt = blogRole.map(i => {
+            var result = blogRole.map(i => {
               return {
                 value: i.userCount,
                 name: i.roleName
@@ -24,34 +24,16 @@ const install = function(Vue) {
 
             const option = {
               backgroundColor: '#fff',
-              title: {
-                text: 'Customized Pie',
-                left: 'center',
-                top: 20,
-                textStyle: {
-                  color: '#ccc'
-                }
-              },
-
               tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b} : {c} ({d}%)"
-              },
-
-              visualMap: {
-                show: false,
-                min: 80,
-                max: 600,
-                inRange: {
-                  colorLightness: [0, 1]
-                }
               },
               series: [{
                 name: '访问来源',
                 type: 'pie',
                 radius: '55%',
                 center: ['50%', '50%'],
-                data: ruselt.sort(function(a, b) { return a.value - b.value; }),
+                data: result.sort(function(a, b) { return a.value - b.value; }),
                 roseType: 'radius',
                 animationType: 'scale',
                 animationEasing: 'elasticOut',

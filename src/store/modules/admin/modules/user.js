@@ -1,6 +1,7 @@
 import api from '@/api/index'
 import { formatUrlParams } from '@/utils'
 import Cookies from 'js-cookie'
+import { Message, MessageBox } from 'element-ui';
 
 export default {
   namespaced: true,
@@ -39,17 +40,25 @@ export default {
         })
       })
     },
-    updataUser({ commit }, data) {
+    updataUser({ dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
+
+        var result = {};
+        Object.keys(data).forEach(i => {
+          if (i === "roleName") {
+            result["roleId"] = data[i];
+          } else {
+            result[i] = data[i];
+          }
+        })
         var action = {
           url: "/User",
-          data: data,
+          data: result,
           methods: 'patch',
           success: function(res) {
             Message({ message: "修改用户成功", type: "success" });
-            commit('updateRole', data);
           }
-        }
+        };
         dispatch('fetchBlogPost', action);
         resolve();
       })

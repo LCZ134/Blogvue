@@ -12,7 +12,8 @@ export default {
       status: false,
       blogContent: "",
       id: ""
-    }
+    },
+    alterBlog: {}
   },
   mutations: {
     getBlogPosts(state, data) {
@@ -44,13 +45,16 @@ export default {
       state.bloglist = state.bloglist.filter(s => s.id != blogPostId);
     },
     updataCulars(state, data) {
-      state.selectComment.id = data.id;
-      state.selectComment.status = data.status;
-      state.selectComment.blogContent = state.bloglist.find(s => s.id == data.id).mdContent;
+      Object.keys(state.selectComment).forEach(i => {
+        if (data[i]) state.selectComment[i] = data[i];
+      })
     },
     deleteCulars(state) {
       state.selectComment.status = false;
       state.selectComment.blogContent = "";
+    },
+    setAlterBlog(state, data) {
+      state.alterBlog = data;
     }
   },
   actions: {
@@ -64,9 +68,6 @@ export default {
     },
     getBlogwhereData({ commit }, data) {
       return new Promise((resolve, reject) => {
-
-        console.log("数据", data);
-
         api.get(`/blog${formatUrlParams(data)}`, null, res => {
           commit('getBlogPosts', res.data);
           commit('getTotalCount', res.totalCount);
@@ -136,6 +137,7 @@ export default {
         success: function(res) {
           Message({ message: "添加文章成功", type: "success" });
           commit('insertBlogPosts', res.extends);
+          commit('setAlterBlog', {});
         }
       }
       dispatch('fetchBlogPost', action);
@@ -152,7 +154,6 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
-
     updatePostHidden({ dispatch, commit }, data) {
       var action = {
         url: "/blog/TriggerHidden",
@@ -176,9 +177,11 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
-
     OpenCular({ commit }, data) {
-      commit('updataCulars', data);
+      api.get("/blog/" + data.id, null, res => {
+        data["blogContent"] = res.mdContent;
+        commit('updataCulars', data);
+      });
     },
     closeCular({ commit }) {
       commit('deleteCulars');

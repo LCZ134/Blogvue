@@ -31,7 +31,7 @@
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="showdail(true,scope.row)" size="mini" type="primary">编辑</el-button>
-            <el-button size="mini" type="danger">删除</el-button>
+            <!-- <el-button size="mini" type="danger" @click="delteUser">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -54,9 +54,15 @@
         <el-form-item label="昵称:">
           <el-input autocomplete="off" v-model="ruleForm.nickName"></el-input>
         </el-form-item>
+
         <el-form-item label="身份:">
-         <el-select v-model="ruleForm.roleName" placeholder="请选择活动区域">
-            <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
+          <el-select v-model="ruleForm.roleName" placeholder="选择身份">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
 
@@ -99,33 +105,47 @@ export default {
   created() {
     this.getBlogTagData(this.paging);
     this.getBlogCommentData();
-    console.log("管理",this.roleList);
   },
   methods: {
-    ...mapActions("admin/user", ["getBlogTagData"]),
-        ...mapActions("admin/role", [ "getBlogCommentData"]),
-    handleSizeChange: function() {},
-    handleCurrentChange: function() {},
-    updateBlack(obj) {
-      this.dialogFormVisible = true;
+    ...mapActions("admin/user", ["getBlogTagData", "updataUser", "deleteUser"]),
+    ...mapActions("admin/role", ["getBlogCommentData"]),
+    handleSizeChange: function(size) {
+      this.form.pageSize = size; //每页显示多少条数据
+      this.getBlogTagData(this.paging);
+    },
+    handleCurrentChange: function(pageIndex) {
+      this.form.pageIndex = pageIndex; //多少页
+      this.getBlogTagData(this.paging);
     },
     showdail(status, data) {
       this.dialogFormVisible = true;
       this.dialogName = status ? "编辑" : "添加";
       data = data || {};
+
       Object.keys(this.ruleForm).forEach(s => {
         if (s == "roleName") {
-          this.ruleForm[s] = data["role"].roleName;
+          this.ruleForm[s] = data["role"].id;
         } else {
           this.ruleForm[s] = data[s] == null ? "" : data[s];
         }
       });
     },
     submitForm() {
+      let that = this;
       if (this.ruleForm.id.length > 0) {
+        this.updataUser(this.ruleForm).then(function() {
+          that.dialogFormVisible = false;
+          that.getBlogTagData(that.paging);
+        });
       } else {
+        this.dialogFormVisible = false;
       }
-      that.dialogVisible = false;
+    },
+    delteUser(id) {
+      let that = this;
+      this.deleteUser(id).then(function() {
+        that.getBlogTagData(that.paging);
+      });
     }
   },
   computed: {

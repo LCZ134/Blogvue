@@ -1,12 +1,13 @@
 <template>
   <div class="blogTag">
+
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item label="名称">
         <el-input placeholder="请输入内容" v-model="paging.title"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="getBlogTag">查询</el-button>
+        <el-button type="primary" @click="getRoles">查询</el-button>
       </el-form-item>
 
       <el-form-item style="margin-right: 15px;float: right;">
@@ -75,6 +76,7 @@ export default {
   data() {
     return {
       paging: {
+        title:"",
         pageIndex: 1, //初始页
         pageSize: 10 //    每页的数据
       },
@@ -134,14 +136,14 @@ export default {
     },
     handleSizeChange: function(size) {
       this.paging.pageSize = size; //每页下拉显示数据
-      this.getBlogTagwhereData(this.paging);
+      this.getBlogCommentData(this.paging);
     },
     handleCurrentChange: function(currentPage) {
       this.paging.pageIndex = currentPage; //点击第几页
-      this.getBlogTagwhereData(this.paging);
+      this.getBlogCommentData(this.paging);
     },
-    getBlogTag() {
-      this.getBlogTagwhereData(this.paging);
+    getRoles() {
+      this.getBlogCommentData(this.paging);
     },
     delectRoles(id) {
       var that = this;
