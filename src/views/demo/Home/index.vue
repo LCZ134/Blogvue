@@ -90,7 +90,7 @@
               <span>登录日志</span>
               <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
             </div>
-            <el-collapse class="infinite-list"  v-infinite-scroll="load" accordion>
+            <el-collapse accordion>
               <el-collapse-item
                 v-for="item in eventList"
                 :key="item.id"
@@ -126,7 +126,9 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
-    return {};
+    return {
+      count: 0
+    };
   },
   computed: {
     ...mapState("admin/user", ["userinfo"]),
@@ -137,7 +139,7 @@ export default {
   },
   created() {
     this.getReportToday();
-    this.getEventList({PageSize:8});
+    this.getEventList({ PageSize: 7 });
 
     var that = this;
     this.getBlogCommentData().then(function() {

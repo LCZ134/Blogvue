@@ -1,48 +1,43 @@
 <template>
   <el-row>
-    <el-col :span="22">
-      <!-- @contextmenu.prevent="show" -->
-      <section class="pretty-tabs">
-        <el-tabs
-          class="d2-multiple-page-control"
-          :value="current"
-          type="card"
-          :closable="true"
-          @tab-click="handleClick"
-          @edit="handleTabsEdit"
-        >
-          <el-tab-pane
-            v-for="page in opened"
-            :key="page.fullPath"
-            :label="page.meta.title || '未命名'"
-            :name="page.fullPath"
-          />
-        </el-tabs>
-      </section>
-    </el-col>
-    <el-col :span="2" class="clearButton">
-      <el-dropdown split-button type="primary" @click="closeAll">
-        关闭
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>
-            <i class="el-icon-back"></i>关闭左边
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <i class="el-icon-right"></i>关闭右边
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <div @click="closerOthers">
-              <i class="el-icon-circle-close"></i>关闭其他
-            </div>
-          </el-dropdown-item>
-          <el-dropdown-item >
-            <div @click="closeAll">
+    <div class="magtop">
+      <el-col :span="22">
+        <section class="pretty-tabs">
+          <el-tabs
+            class="d2-multiple-page-control"
+            :value="current"
+            type="card"
+            :closable="true"
+            @tab-click="handleClick"
+            @edit="handleTabsEdit"
+          >
+            <el-tab-pane
+              v-for="page in opened"
+              :key="page.fullPath"
+              :label="page.meta.title || '未命名'"
+              :name="page.fullPath"
+            />
+          </el-tabs>
+        </section>
+      </el-col>
+      <el-col :span="2" class="clearButton">
+        <el-dropdown split-button type="primary" @click="closeAll">
+          关闭
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <div @click="closerOthers">
+                <i class="el-icon-circle-close"></i>关闭其他
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <div @click="closeAll">
                 <i class="el-icon-error"></i>关闭全部
-            </div>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </el-col>
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </div>
   </el-row>
 </template>
 
@@ -57,7 +52,7 @@ export default {
     ...mapState("admin/page", ["opened", "current"])
   },
   methods: {
-    ...mapActions("admin/page", ["close", "closeAll","closeOther"]),
+    ...mapActions("admin/page", ["close", "closeAll", "closeOther"]),
     handleClick(tab, event) {
       const page = this.opened.find(page => page.fullPath === tab.name);
       const { name, params, query } = page;
@@ -73,7 +68,7 @@ export default {
       }
     },
     closerOthers() {
-      var fullPath=this.$route.path;
+      var fullPath = this.$route.path;
       this.closeOther(fullPath);
     }
   },
@@ -89,9 +84,12 @@ export default {
   border: 1px solid #e4e7ed;
   border-bottom: none;
 }
+.magtop {
+  margin-top: 5px;
+}
 .el-dropdown {
   float: right;
-  width: 100%
+  width: 100%;
 }
 .clearButton button {
   cursor: pointer;
@@ -104,7 +102,7 @@ export default {
   width: 70%;
 }
 .clearButton button:nth-of-type(2) {
-  float:right;
+  float: right;
 }
 .clearButton button:hover {
   cursor: pointer;

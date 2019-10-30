@@ -4,7 +4,6 @@
       <img v-bind:src="userinfo.avatarUrl" />
     </div>
     <div>
-      <!-- :default-active="$route.path" -->
       <el-menu router default-active="/" background-color="#293846" text-color="#fff">
         <!-- 左侧导航栏抽取循环部分 将路由列表传给子组件-->
         <asideBarItem

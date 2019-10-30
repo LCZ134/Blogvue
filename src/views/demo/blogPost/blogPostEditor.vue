@@ -28,7 +28,7 @@
             placeholder="请输入内容"
           ></el-input>
         </el-form-item>
-        <el-form-item label="是否显示">
+        <el-form-item label="是否隐藏">
           <el-switch v-model="form.isHidden"></el-switch>
         </el-form-item>
         <el-form-item label="是否置顶">
@@ -95,6 +95,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 import { mavonEditor } from "mavon-editor";
 
 export default {
+  name: "blogposteditor",
   data() {
     return {
       blogPostId: "",

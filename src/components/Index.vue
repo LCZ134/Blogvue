@@ -1,17 +1,16 @@
 <template>
   <div class="index">
     <el-container style="height: 500px; border: 1px solid #eee">
-      <!-- 头部-->
-      <el-header style="text-align: right; font-size: 12px">
-        <TapHeader></TapHeader>
-      </el-header>
-      <!-- 内容部分-->
+      <!-- 导航-->
+      <saide></saide>
       <el-container>
-        <!-- 导航-->
-        <saide></saide>
+        <el-header style="height: 106px;">
+          <TapHeader></TapHeader>
+          <PrettyTabs style="background: #fefefe;margin-bottom: 0;" />
+        </el-header>
         <!--详情-->
         <el-main>
-          <PrettyTabs />
+          <!-- <PrettyTabs /> -->
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item v-for="item in levelList" :key="item.path">{{item.name}}</el-breadcrumb-item>
           </el-breadcrumb>
@@ -64,10 +63,15 @@ body,
   height: 100%;
 }
 
+.el-tabs__header {
+  margin: 0;
+}
+
 .el-header {
   background-color: #24272e;
   color: #333;
-  line-height: 60px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .el-aside {
@@ -85,13 +89,6 @@ body,
   padding: 10px;
   background: #32353c !important;
 }
-
-/* .app-side-logo label {
-  display: block;
-  line-height: 60px;
-  font-size: 30px;
-  color: #fff;
-} */
 
 .app-side-logo img {
   width: 60px;

@@ -8,7 +8,6 @@ export default {
     opened: settings.page.opened,
     current: '',
     pool: []
-
   },
   actions: {
     /**

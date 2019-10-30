@@ -17,7 +17,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          
+
           <el-form-item label="时间">
             <el-date-picker
               type="date"
@@ -73,7 +73,7 @@
             </el-table-column>
 
             <el-table-column label="日期" prop="createOn" width="180"></el-table-column>
-            <el-table-column label="公开">
+            <el-table-column label="隐藏">
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.isHidden"
@@ -164,7 +164,7 @@ export default {
       "getBlogwhereData",
       "OpenCular",
       "updatePostHidden",
-      "updatePostShow"
+      "updatePostTop"
     ]),
     ...mapActions("admin/blogTag", ["getBlogTagData"]),
     ...mapActions("admin/blogComment", ["getBlogCommentData"]),
@@ -202,10 +202,10 @@ export default {
       this.getBlogwhereData(this.form);
     },
     showChange(status, id) {
-      this.updatePostShow({ id, isTop: status ? 1 : 0 });
+      this.updatePostHidden({ id, isHidden: status ? 1 : 0 });
     },
     topChange(status, id) {
-      this.updatePostHidden({ id, isHidden: status ? 1 : 0 });
+      this.updatePostTop({ id, isTop: status ? 1 : 0 });
     }
   },
   computed: {

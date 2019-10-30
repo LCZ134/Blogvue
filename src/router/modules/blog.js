@@ -9,6 +9,7 @@ export default {
   path: '/blogpost',
   name: '文章管理',
   component: Index,
+  icon: 'el-icon-document',
   meta: {
     title: '博客',
     showTab: false

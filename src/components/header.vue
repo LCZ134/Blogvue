@@ -1,5 +1,9 @@
 <template>
   <div class="header">
+    <el-breadcrumb style="line-height: 60px;position: absolute;">
+      <el-breadcrumb-item  v-for="item in router" :key="item.name" :to="{ path: '/' }">{{item.name}}</el-breadcrumb-item>
+    </el-breadcrumb>
+
     <el-dropdown>
       <i class="el-icon-setting" style="margin-right: 15px"></i>
       <span>{{userinfo.nickName}}</span>
@@ -16,6 +20,18 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
+  data() {
+    return {
+      router: [
+        {
+          name: "首页"
+        },
+        {
+          name: "页面一"
+        }
+      ]
+    };
+  },
   computed: {
     ...mapState("admin/user", ["userinfo"])
   },
@@ -37,11 +53,12 @@ export default {
       let matched = this.$route.matched.filter(item => item.name);
       this.levelList = matched;
     },
-    setting(){
-       this.$router.push("/setting");
+    setting() {
+      this.$router.push("/setting");
     }
   },
   created() {
+    //console.log(this.router);
     this.getBreadcrumb();
   },
   watch: {
@@ -52,6 +69,12 @@ export default {
 };
 </script>
 
-
 <style>
+.header {
+  height: 60px;
+  text-align: right;
+  padding: 0 30px;
+  line-height: 60px;
+  overflow: hidden;
+}
 </style>

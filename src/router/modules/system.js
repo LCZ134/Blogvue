@@ -11,6 +11,7 @@ export default {
     title: '博客',
     showTab: false
   },
+  icon: 'el-icon-s-tools',
   IsHidden: true,
   children: [{
     path: '/setting',

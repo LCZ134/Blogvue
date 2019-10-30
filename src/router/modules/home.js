@@ -13,6 +13,7 @@ export default {
   path: '/',
   name: '主页',
   component: Index,
+  icon: 'el-icon-house',
   meta: { requireAuth: true },
   IsHidden: true,
   children: [{

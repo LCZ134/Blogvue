@@ -16,7 +16,6 @@ export default {
       return new Promise((resolve, reject) => {
         api.get(`/BrowsingHistory/GetEvent${formatUrlParams(data)}`, null, res => {
           commit('setEventList', res.data);
-          console.log("登录", res.data)
           resolve();
         })
       })

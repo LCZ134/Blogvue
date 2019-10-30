@@ -67,7 +67,8 @@
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="showDialog(scope.row.id)" size="mini">子评论</el-button>
+            <el-button @click="showDialog(scope.row.id)" size="mini">查看评论</el-button>
+            <el-button @click="showDialog(scope.row.id)" size="mini">评论</el-button>
             <el-button @click="deleteComment(scope.row.id)" size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
@@ -87,6 +88,13 @@
 
     <!-- 查看弹出框 -->
     <el-dialog title="评论" :visible.sync="dialogTableVisible">
+      <el-collapse accordion>
+        <comments :comtId="parentId"></comments>
+      </el-collapse>
+    </el-dialog>
+
+    <!-- 添加评论 -->
+    <el-dialog title="添加评论" center :visible.sync="dialogAddComment">
       <el-collapse accordion>
         <comments :comtId="parentId"></comments>
       </el-collapse>
@@ -113,6 +121,7 @@ export default {
         pageSize: 10 // 每页的数据,
       },
       dialogTableVisible: false,
+      dialogAddComment: false,
       parentId: "" //父评论
     };
   },
@@ -145,7 +154,7 @@ export default {
 
           this.parentId = CommentId;
         } else {
-          this.$message({ message: "没有子评论" });
+          this.$message({ message: "没有评论" });
         }
       });
     },

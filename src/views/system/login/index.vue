@@ -21,8 +21,11 @@
         <el-input type="text" v-model="ruleForm.email" auto-complete="off" placeholder="用户名"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input type="password" v-model="ruleForm.password" auto-complete="off" placeholder="密码"></el-input>
+        <el-input :type="iptType" v-model="ruleForm.password" auto-complete="off" placeholder="密码">
+          <i class="el-icon-view" slot="suffix" @click="upipttype"></i>
+        </el-input>
       </el-form-item>
+
       <el-checkbox v-model="checked" class="rememberme">记住账号</el-checkbox>
       <el-form-item style="width:100%;">
         <el-button type="primary" style="width:100%;" @click="handleSubmit" :loading="logining">登录</el-button>
@@ -43,7 +46,6 @@ export default {
     return {
       logining: false,
       ruleForm: {
-        //admin@qq.com,admin
         email: "",
         password: ""
       },
@@ -51,7 +53,9 @@ export default {
         email: [{ required: true, message: "输入错误", trigger: "blur" }],
         password: [{ required: true, message: "输入错误", trigger: "blur" }]
       },
-      checked: false
+      checked: false,
+      ispwd: true,
+      iptType: "password"
     };
   },
   methods: {
@@ -107,6 +111,10 @@ export default {
           this.$message.error("api error, HTTP CODE: " + res.status);
         }
       );
+    },
+    upipttype() {
+      this.ispwd = !this.ispwd;
+      this.iptType = this.ispwd ? "password" : "text";
     }
   },
   computed: {

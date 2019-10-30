@@ -6,6 +6,7 @@ export default {
   path: '/Comment',
   name: '评论管理',
   component: Index,
+  icon: 'el-icon-s-comment',
   meta: {
     title: '博客',
     showTab: false

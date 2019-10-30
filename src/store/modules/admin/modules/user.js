@@ -42,18 +42,10 @@ export default {
     },
     updataUser({ dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
-
-        var result = {};
-        Object.keys(data).forEach(i => {
-          if (i === "roleName") {
-            result["roleId"] = data[i];
-          } else {
-            result[i] = data[i];
-          }
-        })
+        console.log(data);
         var action = {
           url: "/User",
-          data: result,
+          data: data,
           methods: 'patch',
           success: function(res) {
             Message({ message: "修改用户成功", type: "success" });

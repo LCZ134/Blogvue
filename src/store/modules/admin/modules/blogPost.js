@@ -114,7 +114,6 @@ export default {
           formData.append(key, data[key]);
         }
       });
-
       api[methods](
         url,
         formData,
@@ -165,8 +164,7 @@ export default {
       }
       dispatch('fetchBlogPost', action);
     },
-
-    updatePostShow({ dispatch, commit }, data) {
+    updatePostTop({ dispatch, commit }, data) {
       var action = {
         url: "/blog/TriggerTop",
         data: data,

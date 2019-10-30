@@ -51,7 +51,7 @@
         </el-form-item>
 
         <el-form-item label="value" prop="value">
-          <el-input v-model="ruleForm.value"></el-input>
+          <el-input type="textarea" v-model="ruleForm.value"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" v-show="dialogName!='查看'" class="dialog-footer">
@@ -110,6 +110,7 @@ export default {
               that.getSettingList(that.paging);
             });
           }
+          this.getSettingList(this.paging);
         }
       });
     },

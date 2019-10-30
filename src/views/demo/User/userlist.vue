@@ -2,7 +2,7 @@
   <div class="userList">
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item label="名称">
-        <el-input placeholder="请输入内容"></el-input>
+        <el-input v-model="paging.Name" placeholder="请输入内容"></el-input>
       </el-form-item>
 
       <el-form-item>
@@ -15,23 +15,41 @@
         <el-table-column label="昵称">
           <template slot-scope="scope">
             <el-popover placement="top-start" width="200" trigger="hover">
-              <p>没想好</p>
+              <!-- <p>没想好</p> -->
               <el-button slot="reference">{{scope.row.nickName}}</el-button>
             </el-popover>
           </template>
         </el-table-column>
 
-        <el-table-column label="身份" prop="role.roleName"></el-table-column>
+        <el-table-column label="角色" prop="role.roleName"></el-table-column>
         <el-table-column label="邮箱">
           <template slot-scope="scope">
             <p>{{scope.row.email | fromatStatus}}</p>
           </template>
         </el-table-column>
 
+        <el-table-column label="性别">
+          <template>
+            <p>无</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="生日">
+          <template>
+            <p>无</p>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="状态">
+          <template>
+            <p>状态</p>
+          </template>
+        </el-table-column>
+
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="showdail(true,scope.row)" size="mini" type="primary">编辑</el-button>
-            <!-- <el-button size="mini" type="danger" @click="delteUser">删除</el-button> -->
+            <el-button size="mini" type="danger" @click="delteUser">加入黑名单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -48,7 +66,7 @@
       class="comment-page"
     ></el-pagination>
 
-    <!-- 查看 -->
+    <!-- 编辑 -->
     <el-dialog :title="dialogName" :visible.sync="dialogFormVisible" center>
       <el-form label-width="80px">
         <el-form-item label="昵称:">
@@ -56,7 +74,7 @@
         </el-form-item>
 
         <el-form-item label="身份:">
-          <el-select v-model="ruleForm.roleName" placeholder="选择身份">
+          <el-select v-model="ruleForm.roleId" placeholder="选择身份">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -88,7 +106,7 @@ export default {
       paging: {
         Name: "", //模糊查询
         pageIndex: 1, //初始页
-        pagesize: 10, //    每页的数据
+        pageSize: 10, //    每页的数据
         dateFrom: "",
         dateTo: ""
       },
@@ -96,7 +114,7 @@ export default {
       dialogName: "编辑",
       ruleForm: {
         id: "",
-        roleName: "",
+        roleId: "",
         nickName: "",
         email: ""
       }
@@ -110,21 +128,20 @@ export default {
     ...mapActions("admin/user", ["getBlogTagData", "updataUser", "deleteUser"]),
     ...mapActions("admin/role", ["getBlogCommentData"]),
     handleSizeChange: function(size) {
-      this.form.pageSize = size; //每页显示多少条数据
+      this.paging.pageSize = size; //每页显示多少条数据
       this.getBlogTagData(this.paging);
     },
     handleCurrentChange: function(pageIndex) {
-      this.form.pageIndex = pageIndex; //多少页
+      this.paging.pageIndex = pageIndex; //多少页
       this.getBlogTagData(this.paging);
     },
     showdail(status, data) {
       this.dialogFormVisible = true;
       this.dialogName = status ? "编辑" : "添加";
       data = data || {};
-
       Object.keys(this.ruleForm).forEach(s => {
-        if (s == "roleName") {
-          this.ruleForm[s] = data["role"].id;
+        if (s == "roleId") {
+          this.ruleForm[s] = data["role"] == null ? "" : data["role"].id;
         } else {
           this.ruleForm[s] = data[s] == null ? "" : data[s];
         }
@@ -142,10 +159,12 @@ export default {
       }
     },
     delteUser(id) {
-      let that = this;
-      this.deleteUser(id).then(function() {
-        that.getBlogTagData(that.paging);
-      });
+      this.$message.error("未绑定方法");
+
+      // let that = this;
+      // this.deleteUser(id).then(function() {
+      //   that.getBlogTagData(that.paging);
+      // });
     }
   },
   computed: {
