@@ -4,6 +4,7 @@ import blogpost from '@/views/demo/blogpost/blogPostList'
 import blogposteditor from '@/views/demo/blogpost/blogposteditor'
 import Taglist from '@/views/demo/taglist'
 import Danmus from '@/views/demo/Danmus/danmusList'
+import Notice from '@/views/demo/notice'
 
 export default {
   path: '/blogpost',
@@ -67,6 +68,17 @@ export default {
         showTab: true
       },
       IsHidden: true,
-    }
+    },
+    {
+      path: '/Notice',
+      name: '公告管理',
+      component: Notice,
+      meta: {
+        title: '公告管理',
+        auth: true,
+        showTab: true
+      },
+      IsHidden: true,
+    },
   ]
 }

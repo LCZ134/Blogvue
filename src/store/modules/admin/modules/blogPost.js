@@ -177,7 +177,8 @@ export default {
     },
     OpenCular({ commit }, data) {
       api.get("/blog/" + data.id, null, res => {
-        data["blogContent"] = res.mdContent;
+        //data["blogContent"] = res.mdContent;
+        data["blogContent"] = res.content;
         commit('updataCulars', data);
       });
     },

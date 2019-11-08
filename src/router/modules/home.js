@@ -6,6 +6,7 @@ import UserAdd from '@/views/demo/User/useradd'
 
 import Role from '@/views/demo/User/role'
 import Personal from '@/views/demo/User/personal'
+import EventList from '@/views/demo/User/event'
 
 
 
@@ -70,6 +71,17 @@ export default {
         showTab: true
       },
       IsHidden: false,
+    },
+    {
+      path: '/EventList',
+      name: '请求日志',
+      component: EventList,
+      meta: {
+        title: '请求日志',
+        auth: true,
+        showTab: true
+      },
+      IsHidden: true,
     },
   ]
 }

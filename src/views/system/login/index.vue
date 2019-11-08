@@ -14,7 +14,7 @@
       class="demo-ruleForm login-page"
     >
       <el-form-item class="lowin-box">
-        <h3 class="title">Sign in to continue</h3>
+        <h3 class="title">this blog</h3>
       </el-form-item>
 
       <el-form-item prop="email">

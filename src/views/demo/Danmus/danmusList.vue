@@ -72,30 +72,30 @@
 
     <!-- 添加 -->
     <el-dialog title="添加" :visible.sync="dialogVisible">
-      <el-form :model="page" :rules="rules" ref="page" label-width="80px">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px">
         <p
           class="danmu-text"
-          :style="{color:page.color,fontSize:page.fontesize+'px'}"
-        >{{page.content |IsNullOr}}</p>
+          :style="{color:ruleForm.color,fontSize:ruleForm.fontesize+'px'}"
+        >{{ruleForm.content |IsNullOr}}</p>
 
         <el-form-item label="颜色选择">
-          <colorPicker v-model="page.color" />
+          <colorPicker v-model="ruleForm.color" />
         </el-form-item>
 
         <el-form-item label="字体大小">
-          <el-input-number v-model="page.fontesize" controls-position="right" :min="12"></el-input-number>
+          <el-input-number v-model="ruleForm.fontesize" controls-position="right" :min="12"></el-input-number>
         </el-form-item>
 
-        <el-form-item label="弹幕类型">
-          <el-input v-model="page.type"></el-input>
+        <el-form-item label="弹幕类型" prop="type">
+          <el-input v-model="ruleForm.type"></el-input>
         </el-form-item>
 
-        <el-form-item label="弹幕发言">
-          <el-input type="textarea" v-model="page.content"></el-input>
+        <el-form-item label="弹幕发言" prop="content">
+          <el-input type="textarea" v-model="ruleForm.content"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button>重置</el-button>
+        <el-button @click="reset">重置</el-button>
         <el-button type="primary" @click="submitForm()">立即创建</el-button>
       </div>
     </el-dialog>
@@ -115,7 +115,7 @@ export default {
         pageSize: 10 // 每页的数据,
       },
       dialogVisible: false,
-      page: {
+      ruleForm: {
         content: "",
         color: "#ff0000",
         fontesize: 20,
@@ -125,7 +125,8 @@ export default {
       rules: {
         content: [
           { required: true, message: "请填写弹幕评论", trigger: "blur" }
-        ]
+        ],
+        type: [{ required: true, message: "不能为空", trigger: "blur" }]
       }
     };
   },
@@ -145,11 +146,42 @@ export default {
     getDanmu() {
       this.gitdanmlist(this.form);
     },
+    reset() {
+      this.$nextTick(() => {
+        if (this.$refs.ruleForm !== undefined) {
+          this.$refs.ruleForm.resetFields();
+        }
+        this.ruleForm.content = "";
+      });
+    },
+    showdail(status) {
+      this.$nextTick(() => {
+        if (this.$refs.ruleForm !== undefined) {
+          this.$refs.ruleForm.resetFields();
+        }
+
+        this.dialogVisible = true;
+        var data = {
+          content: "",
+          color: "#ff0000",
+          fontesize: 20,
+          type: "scroll"
+        };
+
+        Object.keys(this.ruleForm).forEach(s => {
+          this.ruleForm[s] = data[s] == null ? "" : data[s];
+        });
+      });
+    },
     submitForm() {
       var that = this;
-      this.insertDanmu(this.page).then(function() {
-        that.dialogVisible = false;
-        that.gitdanmlist(that.form);
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.insertDanmu(this.ruleForm).then(function() {
+            that.dialogVisible = false;
+            that.gitdanmlist(that.form);
+          });
+        }
       });
     },
     deleteDanmus(id) {

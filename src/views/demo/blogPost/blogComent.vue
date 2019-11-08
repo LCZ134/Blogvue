@@ -2,12 +2,13 @@
   <div>
     <el-dialog title="查看" :visible.sync="selectComment.status" width="60%" center>
       <div class="mavonEditor">
-        <mavon-editor v-model="selectComment.blogContent" :toolbars="markdownOption" />
+        <!-- <mavon-editor v-model="selectComment.blogContent" :toolbars="markdownOption" /> -->
+        <div v-html="selectComment.blogContent"></div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="selectComment.status = false">取 消</el-button>
         <el-button type="primary" @click="updateBlogcomment">确 定</el-button>
-      </span>
+      </span>-->
     </el-dialog>
   </div>
 </template>
@@ -72,4 +73,30 @@ export default {
   }
 };
 </script>
+<style >
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+p {
+    font-size: 14px;
+    margin: 0 0 10px;
+}
+code {
+    font-size: 87.5%;
+    color: #e91e63;
+    word-break: break-word;
+}
+.mavonEditor {
+  text-align: left !important;
+}
+.mavonEditor img {
+  width: 100%;
+}
+</style>
 

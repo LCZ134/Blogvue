@@ -151,7 +151,6 @@ export default {
       this.getBlogChildData(CommentId).then(s => {
         if (this.blogCommentChild.length > 0) {
           this.dialogTableVisible = true;
-
           this.parentId = CommentId;
         } else {
           this.$message({ message: "没有评论" });
