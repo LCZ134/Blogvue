@@ -1,6 +1,6 @@
 # blogvue
 
-> 这只是 .netCore+Vue 的前端后台管理项目
+> 这是一个简单的 .netCore+Vue 的前端后台管理项目
 
 > 环境：vue-cli、vue-router、vuex等
 
