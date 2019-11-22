@@ -30,19 +30,19 @@
 
         <el-table-column label="性别">
           <template>
-            <p>无</p>
+            <p>男</p>
           </template>
         </el-table-column>
 
         <el-table-column label="生日">
           <template>
-            <p>无</p>
+            <p>未设置</p>
           </template>
         </el-table-column>
 
         <el-table-column label="状态">
           <template>
-            <p>状态</p>
+            <p>正常</p>
           </template>
         </el-table-column>
 
