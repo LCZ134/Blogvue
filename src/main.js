@@ -11,7 +11,6 @@ Vue.prototype.$cookie = Cookies
 
 //引用mavonEditor文件编辑器
 import 'mavon-editor/dist/css/index.css'
-// Vue.use(mavonEditor)
 
 //引用element-ui
 import ElementUI from 'element-ui'
