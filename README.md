@@ -4,6 +4,15 @@
 
 > 环境：vue-cli、vue-router、vuex等
 
+## 页面展示
+
+![Image text](https://raw.githubusercontent.com/LCZ134/Blogvue/master/src/assets/1.png)
+![Image text](https://raw.githubusercontent.com/LCZ134/Blogvue/master/src/assets/2.png)
+![Image text](https://raw.githubusercontent.com/LCZ134/Blogvue/master/src/assets/3.png)
+![Image text](https://raw.githubusercontent.com/LCZ134/Blogvue/master/src/assets/4.png)
+![Image text](https://raw.githubusercontent.com/LCZ134/Blogvue/master/src/assets/5.png)
+
+
 ## Build Setup
 
 ``` bash
